@@ -23,12 +23,14 @@
   },
   "homepage": "https://github.com/wodoame/codebase-mindmap#readme",
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "tailwindcss": "^4.1.12",
     "vite": "^7.1.3"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.12",
     "@tailwindcss/vite": "^4.1.12",
+    "d3": "^7.9.0",
     "lit": "^3.3.1"
   }
 }
