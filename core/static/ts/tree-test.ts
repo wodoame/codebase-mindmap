@@ -165,6 +165,29 @@ document.addEventListener('DOMContentLoaded', () => {
             .style("font-size", "12px")
             .style("font-family", "sans-serif");
 
+        // Add expand/collapse indicator circle
+        nodeEnter.append('circle')
+            .attr('class', 'expand-indicator')
+            .attr('r', 8)
+            .attr('cx', 0)  // Will be positioned after rectangle sizing
+            .attr('cy', 0)
+            .style('fill', '#fff')
+            .style('stroke', '#666')
+            .style('stroke-width', 1)
+            .style('opacity', d => d._children || d.children ? 1 : 0); // Only show if has children
+
+        // Add expand/collapse indicator text
+        nodeEnter.append('text')
+            .attr('class', 'expand-text')
+            .attr('dy', '.35em')
+            .attr('text-anchor', 'middle')
+            .style('font-size', '10px')
+            .style('font-weight', 'bold')
+            .style('fill', '#666')
+            .style('pointer-events', 'none')
+            .style('opacity', d => d._children || d.children ? 1 : 0)
+            .text(d => d._children ? '>' : '<'); // > for collapsed, < for expanded
+
         // Update nodes
         const nodeUpdate = nodeEnter.merge(node).transition()
             .duration(duration)
@@ -195,6 +218,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Adjust text position to be centered within the left-aligned rectangle
                 select(textElement.parentNode as Element).select('text:not(.expand-text)')
                     .attr('x', rectWidth / 2);  // Center text within rectangle
+
+                // Position the expand/collapse indicator circle to the right of rectangle
+                const spacing = 5;
+                const indicatorX = rectWidth + spacing + 8; // Rectangle width + spacing + circle radius
+                
+                select(textElement.parentNode as Element).select('.expand-indicator')
+                    .attr('cx', indicatorX)
+                    .style('opacity', d._children || d.children ? 1 : 0);
+
+                select(textElement.parentNode as Element).select('.expand-text')
+                    .attr('x', indicatorX)
+                    .style('opacity', d._children || d.children ? 1 : 0)
+                    .text(d._children ? '>' : '<');
             });
 
         // Exit nodes
@@ -204,7 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .remove();
 
         nodeExit.select('rect').attr('width', 1e-6).attr('height', 1e-6);
-        nodeExit.select('text').style('fill-opacity', 1e-6);
+        nodeExit.select('text:not(.expand-text)').style('fill-opacity', 1e-6);
+        nodeExit.select('.expand-indicator').style('opacity', 1e-6);
+        nodeExit.select('.expand-text').style('opacity', 1e-6);
 
         // Links - update after a small delay to ensure rectangle dimensions are calculated
         setTimeout(() => {
@@ -234,10 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Use stored rectangle dimensions for left-aligned rectangles
                     const parentWidth = d.parent?.rectWidth || 60;
                     
-                    // Connect from right edge of parent to left edge of child (which is at node position)
+                    // Account for expand indicator circle (radius 8 + spacing 5)
+                    const indicatorSpace = 8 + 5;
+                    
+                    // Connect from past the indicator circle to left edge of child
                     const sourcePoint = {
                         x: d.parent?.x || 0,  // Vertical position
-                        y: (d.parent?.y || 0) + parentWidth  // Right edge of left-aligned parent rectangle
+                        y: (d.parent?.y || 0) + parentWidth + indicatorSpace + 8  // Past the indicator circle
                     };
                     const targetPoint = {
                         x: d.x || 0,  // Vertical position  
