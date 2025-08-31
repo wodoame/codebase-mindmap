@@ -39,7 +39,7 @@ const treeData: Node = {
                 {
                     "name": "Convolution Layers",
                     "children": [
-                        { "name": "Forward Pass: Slide filter step-by-step (stride)" }
+                        { "name": "Forward Pass" }
                     ]
                 }
             ]
@@ -114,29 +114,49 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr("transform", d => `translate(${source.y0},${source.x0})`)
             .on('click', click);
 
-        nodeEnter.append('circle')
+        nodeEnter.append('rect')
             .attr('class', 'node')
-            .attr('r', 1e-6)
-            .style("fill", d => d._children ? "lightsteelblue" : "#fff");
+            .attr('width', 1e-6)
+            .attr('height', 1e-6)
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('rx', 5)  // Rounded corners
+            .attr('ry', 5)  // Rounded corners
+            .style("fill", d => d._children ? "lightsteelblue" : "#fff")
+            .style("stroke", "steelblue")
+            .style("stroke-width", 2);
 
         nodeEnter.append('text')
             .attr("dy", ".35em")
-            .attr("x", d => d.children || d._children ? -13 : 13)
-            .attr("text-anchor", d => d.children || d._children ? "end" : "start")
+            .attr("text-anchor", "middle")  // Center text horizontally
             .text(d => d.data.name)
-            .style("fill-opacity", 1e-6);
+            .style("fill-opacity", 1e-6)
+            .style("font-size", "12px")
+            .style("font-family", "sans-serif");
 
         // Update nodes
         const nodeUpdate = nodeEnter.merge(node).transition()
             .duration(duration)
             .attr("transform", d => `translate(${d.y},${d.x})`);
 
-        nodeUpdate.select('circle')
-            .attr('r', 10)
-            .style("fill", d => d._children ? "lightsteelblue" : "#fff");
-
+        // Calculate text dimensions and update rectangles
         nodeUpdate.select('text')
-            .style("fill-opacity", 1);
+            .style("fill-opacity", 1)
+            .each(function(d) {
+                const textElement = this as SVGTextElement;
+                const bbox = textElement.getBBox();
+                const padding = 10;
+                const rectWidth = bbox.width + padding * 2;
+                const rectHeight = bbox.height + padding;
+                
+                // Update the rectangle size and position
+                select(textElement.parentNode as Element).select('rect')
+                    .attr('width', rectWidth)
+                    .attr('height', rectHeight)
+                    .attr('x', -rectWidth / 2)  // Center horizontally
+                    .attr('y', -rectHeight / 2)  // Center vertically
+                    .style("fill", d._children ? "lightsteelblue" : "#fff");
+            });
 
         // Exit nodes
         const nodeExit = node.exit().transition()
@@ -144,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr("transform", d => `translate(${source.y},${source.x})`)
             .remove();
 
-        nodeExit.select('circle').attr('r', 1e-6);
+        nodeExit.select('rect').attr('width', 1e-6).attr('height', 1e-6);
         nodeExit.select('text').style('fill-opacity', 1e-6);
 
         // Links
