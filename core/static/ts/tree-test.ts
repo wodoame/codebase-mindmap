@@ -179,21 +179,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const linkEnter = link.enter().insert('path', "g")
             .attr("class", "link")
             .attr('d', d => {
-                const o = { x: source.x0!, y: source.y0! };
+                const sourceRect = getNodeBounds(source);
+                const o = { 
+                    x: source.x0!, 
+                    y: source.y0! + sourceRect.width / 2  // Right edge of source
+                };
                 return diagonal(o, o);
             });
 
         const linkUpdate = linkEnter.merge(link).transition()
             .duration(duration)
-            .attr('d', d => diagonal(
-                { x: d.x || 0, y: d.y || 0 }, 
-                { x: d.parent?.x || 0, y: d.parent?.y || 0 }
-            ));
+            .attr('d', d => {
+                // Calculate connection points for rectangles
+                const childRect = getNodeBounds(d);
+                const parentRect = getNodeBounds(d.parent!);
+                
+                // Connect from right edge of parent to left edge of child
+                const sourcePoint = {
+                    x: d.parent?.x || 0,
+                    y: (d.parent?.y || 0) + parentRect.width / 2  // Right edge of parent
+                };
+                const targetPoint = {
+                    x: d.x || 0,
+                    y: (d.y || 0) - childRect.width / 2  // Left edge of child
+                };
+                
+                return diagonal(sourcePoint, targetPoint);
+            });
 
         link.exit().transition()
             .duration(duration)
             .attr('d', d => {
-                const o = { x: source.x!, y: source.y! };
+                const sourceRect = getNodeBounds(source);
+                const o = { 
+                    x: source.x!, 
+                    y: source.y! + sourceRect.width / 2  // Right edge of source
+                };
                 return diagonal(o, o);
             })
             .remove();
@@ -203,6 +224,22 @@ document.addEventListener('DOMContentLoaded', () => {
             d.x0 = d.x!;
             d.y0 = d.y!;
         });
+    }
+
+    // Helper function to get node bounds
+    function getNodeBounds(node: ExtendedHierarchyNode): { width: number; height: number } {
+        if (!node || !node.data) {
+            return { width: 60, height: 30 }; // Default size
+        }
+        
+        // Estimate text width (more accurate would require measuring actual text)
+        const textLength = node.data.name.length;
+        const charWidth = 7; // Approximate character width in pixels
+        const padding = 20; // Total horizontal padding
+        const width = Math.max(60, textLength * charWidth + padding);
+        const height = 30; // Fixed height for consistency
+        
+        return { width, height };
     }
 
     // Diagonal path generator
