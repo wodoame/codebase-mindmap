@@ -12,6 +12,8 @@ interface ExtendedHierarchyNode extends HierarchyNode<Node> {
     x0?: number;
     y0?: number;
     _children?: ExtendedHierarchyNode[] | null;
+    rectWidth?: number;  // Store rectangle width
+    rectHeight?: number; // Store rectangle height
 }
 
 // Tree data
@@ -149,6 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rectWidth = bbox.width + padding * 2;
                 const rectHeight = bbox.height + padding;
                 
+                // Store dimensions on the node data
+                d.rectWidth = rectWidth;
+                d.rectHeight = rectHeight;
+                
                 // Update the rectangle size and position
                 select(textElement.parentNode as Element).select('rect')
                     .attr('width', rectWidth)
@@ -167,57 +173,61 @@ document.addEventListener('DOMContentLoaded', () => {
         nodeExit.select('rect').attr('width', 1e-6).attr('height', 1e-6);
         nodeExit.select('text').style('fill-opacity', 1e-6);
 
-        // Links
-        const link = svg.selectAll<SVGPathElement, ExtendedHierarchyNode>('path.link')
-            .data(links, (d: ExtendedHierarchyNode) => {
-                if (!d.id) {
-                    d.id = `node-${++i}`;
-                }
-                return d.id;
-            });
+        // Links - update after a small delay to ensure rectangle dimensions are calculated
+        setTimeout(() => {
+            const link = svg.selectAll<SVGPathElement, ExtendedHierarchyNode>('path.link')
+                .data(links, (d: ExtendedHierarchyNode) => {
+                    if (!d.id) {
+                        d.id = `node-${++i}`;
+                    }
+                    return d.id;
+                });
 
-        const linkEnter = link.enter().insert('path', "g")
-            .attr("class", "link")
-            .attr('d', d => {
-                const sourceRect = getNodeBounds(source);
-                const o = { 
-                    x: source.x0!, 
-                    y: source.y0! + sourceRect.width / 2  // Right edge of source
-                };
-                return diagonal(o, o);
-            });
+            const linkEnter = link.enter().insert('path', "g")
+                .attr("class", "link")
+                .attr('d', d => {
+                    const sourceRect = getNodeBounds(source);
+                    // Start from right edge of source rectangle
+                    const o = { 
+                        x: source.x0!, 
+                        y: source.y0! + sourceRect.width / 2
+                    };
+                    return diagonal(o, o);
+                });
 
-        const linkUpdate = linkEnter.merge(link).transition()
-            .duration(duration)
-            .attr('d', d => {
-                // Calculate connection points for rectangles
-                const childRect = getNodeBounds(d);
-                const parentRect = getNodeBounds(d.parent!);
-                
-                // Connect from right edge of parent to left edge of child
-                const sourcePoint = {
-                    x: d.parent?.x || 0,
-                    y: (d.parent?.y || 0) + parentRect.width / 2  // Right edge of parent
-                };
-                const targetPoint = {
-                    x: d.x || 0,
-                    y: (d.y || 0) - childRect.width / 2  // Left edge of child
-                };
-                
-                return diagonal(sourcePoint, targetPoint);
-            });
+            const linkUpdate = linkEnter.merge(link).transition()
+                .duration(duration)
+                .attr('d', d => {
+                    // Use stored rectangle dimensions
+                    const parentWidth = d.parent?.rectWidth || 60;
+                    const childWidth = d.rectWidth || 60;
+                    
+                    // Connect from right edge of parent to left edge of child
+                    const sourcePoint = {
+                        x: d.parent?.x || 0,  // Vertical position
+                        y: (d.parent?.y || 0) + parentWidth / 2  // Right edge of parent
+                    };
+                    const targetPoint = {
+                        x: d.x || 0,  // Vertical position  
+                        y: (d.y || 0) - childWidth / 2  // Left edge of child
+                    };
+                    
+                    return diagonal(sourcePoint, targetPoint);
+                });
 
-        link.exit().transition()
-            .duration(duration)
-            .attr('d', d => {
-                const sourceRect = getNodeBounds(source);
-                const o = { 
-                    x: source.x!, 
-                    y: source.y! + sourceRect.width / 2  // Right edge of source
-                };
-                return diagonal(o, o);
-            })
-            .remove();
+            link.exit().transition()
+                .duration(duration)
+                .attr('d', d => {
+                    const sourceRect = getNodeBounds(source);
+                    // Collapse to right edge of source rectangle
+                    const o = { 
+                        x: source.x!, 
+                        y: source.y! + sourceRect.width / 2
+                    };
+                    return diagonal(o, o);
+                })
+                .remove();
+        }, 50); // Small delay to ensure rectangles are sized first
 
         // Store old positions for transition
         nodes.forEach(d => {
