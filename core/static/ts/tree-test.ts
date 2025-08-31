@@ -98,8 +98,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const nodes = treeData.descendants() as ExtendedHierarchyNode[];
         const links = treeData.descendants().slice(1) as ExtendedHierarchyNode[];
 
-        // Normalize depth
-        nodes.forEach(d => { d.y = d.depth * 180; });
+        // Normalize depth - ensure consistent horizontal positioning for same-level nodes
+        const levelSpacing = 200; // Fixed spacing between levels
+        nodes.forEach(d => { 
+            d.y = d.depth * levelSpacing; // Override D3's calculated y position with consistent depth-based positioning
+        });
+
+        // Align nodes of the same depth vertically with even spacing
+        const nodesByDepth: { [depth: number]: ExtendedHierarchyNode[] } = {};
+        nodes.forEach(d => {
+            if (!nodesByDepth[d.depth]) {
+                nodesByDepth[d.depth] = [];
+            }
+            nodesByDepth[d.depth].push(d);
+        });
+
+        // Distribute nodes at each depth level evenly in vertical space
+        Object.keys(nodesByDepth).forEach(depthStr => {
+            const depth = parseInt(depthStr);
+            const nodesAtDepth = nodesByDepth[depth];
+            
+            if (nodesAtDepth.length === 1) {
+                // Single node - center it
+                nodesAtDepth[0].x = height / 2;
+            } else {
+                // Multiple nodes - distribute evenly
+                const spacing = height / (nodesAtDepth.length + 1);
+                nodesAtDepth.forEach((node, index) => {
+                    node.x = spacing * (index + 1);
+                });
+            }
+        });
 
         // Nodes
         const node = svg.selectAll<SVGGElement, ExtendedHierarchyNode>('g.node')
@@ -155,13 +184,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 d.rectWidth = rectWidth;
                 d.rectHeight = rectHeight;
                 
-                // Update the rectangle size and position
+                // Update the rectangle size and position - align left edges
                 select(textElement.parentNode as Element).select('rect')
                     .attr('width', rectWidth)
                     .attr('height', rectHeight)
-                    .attr('x', -rectWidth / 2)  // Center horizontally
+                    .attr('x', 0)  // Align left edge to node position
                     .attr('y', -rectHeight / 2)  // Center vertically
                     .style("fill", d._children ? "lightsteelblue" : "#fff");
+
+                // Adjust text position to be centered within the left-aligned rectangle
+                select(textElement.parentNode as Element).select('text:not(.expand-text)')
+                    .attr('x', rectWidth / 2);  // Center text within rectangle
             });
 
         // Exit nodes
@@ -187,10 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .attr("class", "link")
                 .attr('d', d => {
                     const sourceRect = getNodeBounds(source);
-                    // Start from right edge of source rectangle
+                    // Start from right edge of left-aligned source rectangle
                     const o = { 
                         x: source.x0!, 
-                        y: source.y0! + sourceRect.width / 2
+                        y: source.y0! + sourceRect.width
                     };
                     return diagonal(o, o);
                 });
@@ -198,18 +231,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const linkUpdate = linkEnter.merge(link).transition()
                 .duration(duration)
                 .attr('d', d => {
-                    // Use stored rectangle dimensions
+                    // Use stored rectangle dimensions for left-aligned rectangles
                     const parentWidth = d.parent?.rectWidth || 60;
-                    const childWidth = d.rectWidth || 60;
                     
-                    // Connect from right edge of parent to left edge of child
+                    // Connect from right edge of parent to left edge of child (which is at node position)
                     const sourcePoint = {
                         x: d.parent?.x || 0,  // Vertical position
-                        y: (d.parent?.y || 0) + parentWidth / 2  // Right edge of parent
+                        y: (d.parent?.y || 0) + parentWidth  // Right edge of left-aligned parent rectangle
                     };
                     const targetPoint = {
                         x: d.x || 0,  // Vertical position  
-                        y: (d.y || 0) - childWidth / 2  // Left edge of child
+                        y: d.y || 0   // Left edge of child (at node position since rectangle starts at x=0)
                     };
                     
                     return diagonal(sourcePoint, targetPoint);
@@ -219,10 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 .duration(duration)
                 .attr('d', d => {
                     const sourceRect = getNodeBounds(source);
-                    // Collapse to right edge of source rectangle
+                    // Collapse to right edge of left-aligned source rectangle
                     const o = { 
                         x: source.x!, 
-                        y: source.y! + sourceRect.width / 2
+                        y: source.y! + sourceRect.width
                     };
                     return diagonal(o, o);
                 })
