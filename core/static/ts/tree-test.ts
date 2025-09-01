@@ -1,4 +1,5 @@
 import { select, tree, hierarchy, HierarchyNode } from "d3";
+import { TreeNode } from "./tree-datastructure";
 
 // Define interfaces
 interface Node {
@@ -16,38 +17,24 @@ interface ExtendedHierarchyNode extends HierarchyNode<Node> {
     rectHeight?: number; // Store rectangle height
 }
 
+const cnnArchNode = new TreeNode("CNN Architecture",
+     [
+        new TreeNode("Multiple Layers"),
+        new TreeNode("Input Layer"), 
+        new TreeNode("Convolutional Layer"),
+        new TreeNode("Pooling Layer"), 
+        new TreeNode("Fully Connected Layers")
+     ]);
+const activationFxnNode = new TreeNode("Activation Function", [
+    new TreeNode("ReLU"),
+    new TreeNode("Sigmoid"),
+    new TreeNode("Tanh")
+]);
+const introductionNode = new TreeNode("Introduction", [cnnArchNode]);
+const rootNode = new TreeNode("Root", [introductionNode, activationFxnNode]);
+
 // Tree data
-const treeData: Node = {
-    "name": "Root",
-    "children": [
-        {
-            "name": "Introduction",
-            "children": [
-                {
-                    "name": "CNN Architecture",
-                    "children": [
-                        { "name": "Multiple Layers" },
-                        { "name": "Input Layer" },
-                        { "name": "Convolutional Layer" },
-                        { "name": "Pooling Layer" },
-                        { "name": "Fully Connected Layers" }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Activation Function",
-            "children": [
-                {
-                    "name": "Convolution Layers",
-                    "children": [
-                        { "name": "Forward Pass" }
-                    ]
-                }
-            ]
-        }
-    ]
-};
+const treeData: Node = rootNode.toJSON();
 
 // Set dimensions and margins
 const margin = { top: 20, right: 120, bottom: 20, left: 120 };
