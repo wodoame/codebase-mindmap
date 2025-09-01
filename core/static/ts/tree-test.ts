@@ -36,7 +36,7 @@ const treeData: Node = {
             ]
         },
         {
-            "name": "How Convolutional Layers Work",
+            "name": "Activation Function",
             "children": [
                 {
                     "name": "Convolution Layers",
