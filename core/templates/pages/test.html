@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+     <script type="module" crossorigin src="{% static 'js/vite/bundle.js' %}"></script>
+</head>
+ <body>
+    <div x-data="editor('<p>Hello world! :-)</p>')">
+      <template x-if="isLoaded()">
+        <div class="menu">
+          <button
+            @click="toggleHeading({ level: 1 })"
+            :class="{ 'is-active': isActive('heading', { level: 1 }, updatedAt) }"
+          >
+            H1
+          </button>
+          <button @click="toggleBold()" :class="{ 'is-active' : isActive('bold', updatedAt) }">
+            Bold
+          </button>
+          <button @click="toggleItalic()" :class="{ 'is-active' : isActive('italic', updatedAt) }">
+            Italic
+          </button>
+        </div>
+      </template>
+
+      <div x-ref="element"></div>
+    </div>
+
+    <style>
+      body {
+        margin: 2rem;
+        font-family: sans-serif;
+      }
+      button.is-active {
+        background: black;
+        color: white;
+      }
+      .tiptap {
+        padding: 0.5rem 1rem;
+        margin: 1rem 0;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </body>
+</html>
