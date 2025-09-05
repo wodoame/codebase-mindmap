@@ -1,0 +1,42 @@
+ <div x-data="editor('<p>Hello world! :-)</p>')">
+      <template x-if="isLoaded()">
+        <div class="menu">
+          <button
+            @click="toggleHeading({ level: 1 })"
+            :class="{ 'is-active': isActive('heading', { level: 1 }, updatedAt) }"
+          >
+            H1
+          </button>
+          <button @click="toggleBold()" :class="{ 'is-active' : isActive('bold', updatedAt) }">
+            Bold
+          </button>
+          <button @click="toggleItalic()" :class="{ 'is-active' : isActive('italic', updatedAt) }">
+            Italic
+          </button>
+          <button @click="toggleCodeBlock()" :class="{ 'is-active' : isActive('codeBlock', updatedAt) }">
+            Code Block
+          </button>
+          <select @change="setCodeBlock($event.target.value)" x-show="isActive('codeBlock', updatedAt)">
+            <option value="">Plain</option>
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+            <option value="python">Python</option>
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+            <option value="json">JSON</option>
+          </select>
+        </div>
+      </template>
+
+      <div x-ref="element"></div>
+        {# 
+      <!-- Content retrieval demo -->
+      <div class="content-controls" style="margin-top: 1rem;">
+        <h3>Content Retrieval:</h3>
+        <button @click="console.log('HTML:', getHTML())">Log HTML</button>
+        <button @click="console.log('JSON:', getJSON())">Log JSON</button>
+        <button @click="console.log('Text:', getText())">Log Text</button>
+        <button @click="alert(getHTML())">Show HTML</button>
+      </div>
+        #}
+    </div>

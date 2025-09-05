@@ -1,5 +1,19 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom default border color */
+@layer theme {
+  :root {
+    --default-border-color: #f3f4f6; /* gray-100 */
+  }
+}
+
+@layer base {
+  *, ::before, ::after {
+    border-color: var(--default-border-color);
+  }
+}
+
 @font-face {
   font-family: 'Poppins';
   src: url('../fonts/Poppins-Regular.ttf') format('truetype');
@@ -16,7 +30,7 @@
 }
 
 .modal[data-placement='top']{
-   @apply items-start;
+   @apply items-start top-4;
 }
 
 /* modal animations */
@@ -35,4 +49,14 @@
 
 .modal[data-animation='none'].show{
   @apply visible;
+}
+
+/* editor */
+
+#editor-container{
+  @apply overflow-y-auto max-h-[70vh] md:max-h-[calc(100vh-6rem)];
+}
+
+.tiptap{
+  @apply border-2 rounded-md focus:border-blue-600; ;
 }

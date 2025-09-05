@@ -7,6 +7,7 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-300: oklch(87.2% 0.01 258.338);
@@ -15,7 +16,6 @@
     --color-gray-900: oklch(21% 0.034 264.665);
     --color-white: #fff;
     --spacing: 0.25rem;
-    --container-sm: 24rem;
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
     --text-lg: 1.125rem;
@@ -450,11 +450,6 @@
       }
     }
   }
-  .md\:max-w-sm {
-    @media (width >= 48rem) {
-      max-width: var(--container-sm);
-    }
-  }
   .md\:rounded-md {
     @media (width >= 48rem) {
       border-radius: var(--radius-md);
@@ -503,6 +498,16 @@
     }
   }
 }
+@layer theme {
+  :root {
+    --default-border-color: #f3f4f6;
+  }
+}
+@layer base {
+  *, ::before, ::after {
+    border-color: var(--default-border-color);
+  }
+}
 @font-face {
   font-family: 'Poppins';
   src: url('../fonts/Poppins-Regular.ttf') format('truetype');
@@ -519,6 +524,7 @@
   }
 }
 .modal[data-placement='top'] {
+  top: calc(var(--spacing) * 4);
   align-items: flex-start;
 }
 .modal[data-animation='translate'] {
@@ -537,6 +543,21 @@
 }
 .modal[data-animation='none'].show {
   visibility: visible;
+}
+#editor-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  @media (width >= 48rem) {
+    max-height: calc(100vh - 6rem);
+  }
+}
+.tiptap {
+  border-radius: var(--radius-md);
+  border-style: var(--tw-border-style);
+  border-width: 2px;
+  &:focus {
+    border-color: var(--color-blue-600);
+  }
 }
 @property --tw-rotate-x {
   syntax: "*";
