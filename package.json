@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/wodoame/codebase-mindmap#readme",
   "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
     "@types/d3": "^7.4.3",
     "tailwindcss": "^4.1.12",
     "vite": "^7.1.3"

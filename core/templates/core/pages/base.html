@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
-     <script type="module" crossorigin src="{% static 'js/vite/bundle.js' %}"></script>
+    <script type="module" crossorigin src="{% static 'js/vite/bundle.js' %}"></script>
     <style>
-      body {
-        margin: 2rem;
-        font-family: 'Poppins', sans-serif;
-      }
+        body {
+            margin: 2rem;
+            font-family: 'Poppins', sans-serif;
+        }
          .node {
            cursor: pointer;
          }
@@ -21,9 +21,20 @@
            stroke-width: 2px;
          }
          .node text {
-           font: 12px sans-serif;
+           font-size: 12px !important;
+           font-family: 'Poppins', sans-serif !important;
+           font-weight: 400 !important;
            fill: #333;
            pointer-events: none;
+         }
+         
+         /* Additional SVG text targeting */
+         svg text {
+           font-family: 'Poppins', sans-serif !important;
+         }
+         
+         text {
+           font-family: 'Poppins', sans-serif !important;
          }
          .expand-indicator {
            cursor: pointer;
@@ -47,5 +58,8 @@
   <main class="p-4">
     <div id="tree-container"></div>
   </main>
+    <div class="bg-gray-900/50  fixed inset-0 z-50 w-full hidden" id="animated-backdrop"></div>
+    {% component "baseModal" id="base-modal"  / %}
+      
 </body>
 </html>

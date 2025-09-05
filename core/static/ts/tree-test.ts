@@ -1,5 +1,6 @@
 import { select, tree, hierarchy, HierarchyNode } from "d3";
 import { TreeNode } from "./tree-datastructure";
+import { getModal } from "./modals";
 
 // Define interfaces
 interface Node {
@@ -130,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nodeEnter = node.enter().append('g')
             .attr('class', 'node')
             .attr("transform", d => `translate(${source.y0},${source.x0})`)
-            .on('click', click);
+            .on('click', ()=>getModal().open()); // Open modal on click
 
         nodeEnter.append('rect')
             .attr('class', 'node')

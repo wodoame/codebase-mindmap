@@ -1,9 +1,38 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *));
 @font-face {
   font-family: 'Poppins';
   src: url('../fonts/Poppins-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+}
+
+[x-cloak] { display: none !important; }
+
+/* styles for modals */
+.modal[data-placement='center']{
+   @apply md:items-center;
+}
+
+.modal[data-placement='top']{
+   @apply items-start;
+}
+
+/* modal animations */
+
+.modal[data-animation='translate']{
+  @apply transition-transform translate-y-full;
+}
+
+.modal[data-animation='translate'].show {
+  @apply translate-y-0;
+}
+
+.modal[data-animation='none']{
+   @apply invisible;
+}
+
+.modal[data-animation='none'].show{
+  @apply visible;
 }

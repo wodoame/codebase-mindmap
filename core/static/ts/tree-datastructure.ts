@@ -283,4 +283,4 @@ export function demonstrateUsage(): void {
     tree.printTree();
 }
 
-demonstrateUsage();
+// demonstrateUsage();
