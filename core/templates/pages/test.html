@@ -41,12 +41,21 @@
       </template>
 
       <div x-ref="element"></div>
+      
+      <!-- Content retrieval demo -->
+      <div class="content-controls" style="margin-top: 1rem;">
+        <h3>Content Retrieval:</h3>
+        <button @click="console.log('HTML:', getHTML())">Log HTML</button>
+        <button @click="console.log('JSON:', getJSON())">Log JSON</button>
+        <button @click="console.log('Text:', getText())">Log Text</button>
+        <button @click="alert(getHTML())">Show HTML</button>
+      </div>
     </div>
 
-    <style>
+    <style> 
       body {
         margin: 2rem;
-        font-family: sans-serif;
+        font-family: 'Poppins', sans-serif;
       }
       button.is-active {
         background: black;

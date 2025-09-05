@@ -44,6 +44,9 @@ document.addEventListener('alpine:init', () => {
             }),
             CodeBlockLowlight.configure({
               lowlight,
+              HTMLAttributes: {
+                spellcheck: 'false',
+              },
             }),
           ],
           content: content,
@@ -78,6 +81,28 @@ document.addEventListener('alpine:init', () => {
       },
       setCodeBlock(language: string = '') {
         editor.chain().focus().setCodeBlock({ language }).run()
+      },
+      
+      // Content retrieval methods
+      getHTML() {
+        return editor.getHTML()
+      },
+      
+      getJSON() {
+        return editor.getJSON()
+      },
+      
+      getText() {
+        return editor.getText()
+      },
+      
+      // Set content methods
+      setHTML(html: string) {
+        editor.commands.setContent(html)
+      },
+      
+      setJSON(json: any) {
+        editor.commands.setContent(json)
       },
     }
   })
