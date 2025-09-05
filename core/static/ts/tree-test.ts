@@ -130,8 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Enter new nodes
         const nodeEnter = node.enter().append('g')
             .attr('class', 'node')
-            .attr("transform", d => `translate(${source.y0},${source.x0})`)
-            .on('click', ()=>getModal().open()); // Open modal on click
+            .attr("transform", d => `translate(${source.y0},${source.x0})`);
 
         nodeEnter.append('rect')
             .attr('class', 'node')
@@ -143,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('ry', 5)  // Rounded corners
             .style("fill", d => d._children ? "lightsteelblue" : "#fff")
             .style("stroke", "steelblue")
-            .style("stroke-width", 2);
+            .style("stroke-width", 2)
+            .on('click', ()=>getModal().open()); // Modal click only on rectangle
 
         nodeEnter.append('text')
             .attr("dy", ".35em")
@@ -151,7 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .text(d => d.data.name)
             .style("fill-opacity", 1e-6)
             .style("font-size", "12px")
-            .style("font-family", "sans-serif");
+            .style("font-family", "sans-serif")
+            .on('click', ()=>getModal().open()); // Modal click on text too
 
         // Add expand/collapse indicator circle
         nodeEnter.append('circle')
@@ -162,7 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .style('fill', '#fff')
             .style('stroke', '#666')
             .style('stroke-width', 1)
-            .style('opacity', d => d._children || d.children ? 1 : 0); // Only show if has children
+            .style('opacity', d => d._children || d.children ? 1 : 0) // Only show if has children
+            .style('cursor', 'pointer')
+            .on('click', function(event, d) {
+                event.stopPropagation(); // Prevent modal from opening
+                click(event, d); // Call the toggle function
+            });
 
         // Add expand/collapse indicator text
         nodeEnter.append('text')
@@ -172,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .style('font-size', '10px')
             .style('font-weight', 'bold')
             .style('fill', '#666')
-            .style('pointer-events', 'none')
+            .style('pointer-events', 'none') // Don't interfere with circle clicks
             .style('opacity', d => d._children || d.children ? 1 : 0)
             .text(d => d._children ? '>' : '<'); // > for collapsed, < for expanded
 
