@@ -3,6 +3,7 @@ import { Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { createLowlight } from 'lowlight'
+import hljs from 'highlight.js'
 
 // Import languages
 import javascript from 'highlight.js/lib/languages/javascript'
@@ -90,8 +91,39 @@ document.addEventListener('alpine:init', () => {
       // Preview mode methods
       updatePreview() {
         if (editor) {
-          console.log(editor.getHTML());
-          this.previewContent = editor.getHTML()
+          let htmlContent = editor.getHTML()
+          
+          // Apply syntax highlighting to code blocks in preview
+          const tempDiv = document.createElement('div')
+          tempDiv.innerHTML = htmlContent
+          
+          // Find all code blocks and apply highlighting
+          const codeBlocks = tempDiv.querySelectorAll('pre code')
+          codeBlocks.forEach((block) => {
+            const codeElement = block as HTMLElement
+            const language = codeElement.className.match(/language-(\w+)/)?.[1]
+            
+            if (language && codeElement.textContent) {
+              try {
+                // Use highlight.js directly for better HTML output
+                const highlighted = hljs.highlight(codeElement.textContent, { language })
+                codeElement.innerHTML = highlighted.value
+                codeElement.className = `language-${language} hljs`
+              } catch (error) {
+                console.warn('Failed to highlight code block:', error)
+                // Fallback to auto-detection if specific language fails
+                try {
+                  const autoHighlighted = hljs.highlightAuto(codeElement.textContent)
+                  codeElement.innerHTML = autoHighlighted.value
+                  codeElement.className = `hljs`
+                } catch (autoError) {
+                  console.warn('Auto-highlighting also failed:', autoError)
+                }
+              }
+            }
+          })
+          
+          this.previewContent = tempDiv.innerHTML
         }
       },
       
