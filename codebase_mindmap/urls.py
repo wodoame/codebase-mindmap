@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("django_components.urls")),
     path('', core_views.Index.as_view(), name='index'),
-    path('test/', core_views.Editor.as_view(), name='editor'),
+    path('test/', core_views.Sandbox.as_view(), name='editor'),
 ]

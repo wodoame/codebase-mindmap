@@ -6,7 +6,8 @@ class Index(View):
         context = {}
         return render(request, 'core/pages/base.html', context)
 
-class Editor(View):
+class Sandbox(View):
+    # ? Random testing area
     def get(self, request):
         context = {}
-        return render(request, 'core/pages/test.html', context)
+        return render(request, 'core/pages/sandbox/test.html', context)
