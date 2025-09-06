@@ -1,0 +1,32 @@
+{# 
+x-data is provided by editor parent component
+#}
+<!-- tabs -->
+<div class="flex">
+  <div class="flex bg-gray-100 hover:bg-gray-200 rounded-lg transition p-1 dark:bg-neutral-700 dark:hover:bg-neutral-600">
+    <nav class="flex gap-x-1" aria-label="Tabs" role="tablist" aria-orientation="horizontal">
+      <button 
+        type="button" 
+        @click="switchToEdit()"
+        :class="isEditMode()? 'bg-white text-gray-700 dark:bg-gray-800 dark:text-neutral-400' : 'bg-transparent text-gray-500 hover:text-gray-700 dark:text-neutral-400 dark:hover:text-white'"
+        class="cursor-pointer py-1 px-4 inline-flex items-center gap-x-2 text-sm focus:outline-none font-medium rounded-lg hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none transition-colors"
+        id="segment-item-1" 
+        aria-selected="true" 
+        role="tab"
+      >
+        Edit
+      </button>
+      <button 
+        type="button" 
+        @click="switchToPreview()"
+        :class="isPreviewMode()? 'bg-white text-gray-700 dark:bg-gray-800 dark:text-neutral-400' : 'bg-transparent text-gray-500 hover:text-gray-700 dark:text-neutral-400 dark:hover:text-white'"
+        class="cursor-pointer py-1 px-4 inline-flex items-center gap-x-2 text-sm focus:outline-none font-medium rounded-lg hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none transition-colors"
+        id="segment-item-2" 
+        aria-selected="false" 
+        role="tab"
+      >
+        Preview
+      </button>
+    </nav>
+  </div>
+</div>
