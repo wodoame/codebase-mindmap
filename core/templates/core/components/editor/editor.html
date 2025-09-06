@@ -1,6 +1,6 @@
  <div x-data="editor('<p>Hello world! :-)</p>')">
-      <template x-if="isLoaded()">
-        <div class="menu flex gap-2">
+    <template x-if="isLoaded()">
+    <div class="menu flex gap-2 items-center">
           <button
             @click="toggleHeading({ level: 1 })"
             :class="{ 'is-active': isActive('heading', { level: 1 }, updatedAt) }"
@@ -21,6 +21,8 @@
            options=["Plain", "JavaScript", "TypeScript", "Python"] 
            onChange="(e)=>setCodeBlock(e.detail.value)"
            / %}
+
+          {% component "editPreviewTabs" / %}
           <!-- <select @change="setCodeBlock($event.target.value)" x-show="isActive('codeBlock', updatedAt)">
             <option value="">Plain</option>
             <option value="javascript">JavaScript</option>
@@ -32,8 +34,12 @@
           </select> -->
         </div>
       </template>
+    <!-- Show editor when in edit mode -->
+    <div x-show="isEditMode()" x-ref="element"></div>
 
-      <div x-ref="element"></div>
+    <!-- Show preview when in preview mode -->
+    <div x-show="isPreviewMode()" x-html="previewContent" class="prose prose-sm max-w-none"></div>
+
         {# 
       <!-- Content retrieval demo -->
       <div class="content-controls" style="margin-top: 1rem;">
@@ -44,4 +50,4 @@
         <button @click="alert(getHTML())">Show HTML</button>
       </div>
         #}
-    </div>
+</div>

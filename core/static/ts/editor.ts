@@ -33,6 +33,8 @@ document.addEventListener('alpine:init', () => {
 
     return {
       updatedAt: Date.now(), // force Alpine to rerender on selection change
+      state: 'edit',
+      previewContent: '',
       init() {
         const _this = this
 
@@ -52,9 +54,11 @@ document.addEventListener('alpine:init', () => {
           content: content,
           onCreate({ editor }) {
             _this.updatedAt = Date.now()
+            _this.updatePreview()
           },
           onUpdate({ editor }) {
             _this.updatedAt = Date.now()
+            _this.updatePreview()
           },
           onSelectionUpdate({ editor }) {
             _this.updatedAt = Date.now()
@@ -81,6 +85,39 @@ document.addEventListener('alpine:init', () => {
       },
       setCodeBlock(language: string = '') {
         editor.chain().focus().setCodeBlock({ language }).run()
+      },
+      
+      // Preview mode methods
+      updatePreview() {
+        if (editor) {
+          console.log(editor.getHTML());
+          this.previewContent = editor.getHTML()
+        }
+      },
+      
+      switchToEdit() {
+        this.state = 'edit'
+        // Make sure editor is visible and editable
+        if (editor) {
+          editor.setEditable(true)
+        }
+      },
+      
+      switchToPreview() {
+        this.state = 'preview'
+        this.updatePreview()
+        // Make editor non-editable in preview mode
+        if (editor) {
+          editor.setEditable(false)
+        }
+      },
+      
+      isEditMode() {
+        return this.state === 'edit'
+      },
+      
+      isPreviewMode() {
+        return this.state === 'preview'
       },
       
       // Content retrieval methods

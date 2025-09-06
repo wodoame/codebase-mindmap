@@ -4,5 +4,5 @@ from django_components import Component, register
 class Editor(Component):
     template_name = 'editor.html'
     
-    def get_context_data(self, *args, **kwargs):
+    def get_template_data(self, args, kwargs, slots, context):
         return kwargs

@@ -12,6 +12,11 @@
   *, ::before, ::after {
     border-color: var(--default-border-color);
   }
+  
+  html {
+    font-size: 0.875rem; /* text-sm equivalent: 14px */
+    line-height: 1.25rem; /* 20px line height */
+  }
 }
 
 @font-face {
@@ -24,7 +29,7 @@
 
 .option{
   /* @apply border dark:border-darkborder px-4 p-2 rounded-full cursor-pointer; */
-  @apply border px-4 p-2 rounded-full cursor-pointer;
+  @apply border px-4 p-2 rounded-lg cursor-pointer;
 }
 
 [x-cloak] { display: none !important; }
