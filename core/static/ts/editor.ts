@@ -16,12 +16,12 @@ import json from 'highlight.js/lib/languages/json'
 const lowlight = createLowlight()
 
 // Register languages
-lowlight.register('javascript', javascript)
-lowlight.register('typescript', typescript)
-lowlight.register('python', python)
-lowlight.register('html', html)
-lowlight.register('css', css)
-lowlight.register('json', json)
+lowlight.register('javascript', javascript as any)
+lowlight.register('typescript', typescript as any)
+lowlight.register('python', python as any)
+lowlight.register('html', html as any)
+lowlight.register('css', css as any)
+lowlight.register('json', json as any)
 
 document.addEventListener('alpine:init', () => {
   Alpine.data('editor', (content:string) => {

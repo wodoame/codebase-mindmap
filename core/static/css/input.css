@@ -22,6 +22,11 @@
   font-display: swap;
 }
 
+.option{
+  /* @apply border dark:border-darkborder px-4 p-2 rounded-full cursor-pointer; */
+  @apply border px-4 p-2 rounded-full cursor-pointer;
+}
+
 [x-cloak] { display: none !important; }
 
 /* styles for modals */

@@ -37,6 +37,7 @@
     "@tiptap/starter-kit": "^3.4.1",
     "alpinejs": "^3.15.0",
     "d3": "^7.9.0",
+    "flowbite": "^3.1.2",
     "highlight.js": "^11.11.1",
     "lit": "^3.3.1",
     "lowlight": "^3.3.0"

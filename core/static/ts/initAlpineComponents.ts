@@ -1,5 +1,7 @@
 import Alpine from 'alpinejs';
 import { modalManager } from './modals';
+import { selectedRect } from '@tiptap/pm/tables';
+import { getDropdown } from './utils';
 
 function createModalInstance(id: string){
     return {
@@ -37,8 +39,34 @@ function createModalInstance(id: string){
     }
 }
 
+function createSelectInstance(id: string){
+    // This component dispatches a custom event 'option-selected' when an option is selected
+    return {
+        isOpen: false,
+        selectedValue: undefined,
+        options: [],
+        init(){
+            this.options = JSON.parse(
+                (this.$refs.wrapper as HTMLElement
+                ).dataset.options as string);
+            this.selectedValue = this.options[0];
+        },
+        select(value:string){
+            this.selectedValue = value;
+            getDropdown('dropdown').hide(); // close the dropdown after selection
+        }, 
+        open(){
+            this.isOpen = true;
+        },
+        close(){
+            this.isOpen = false;
+        }
+    }
+}
+
 function handleAlpineInitialization(){
     Alpine.data('baseModal', createModalInstance);
+    Alpine.data('select', createSelectInstance);
     // more stuff can be here to all be initialized at once
 }
 

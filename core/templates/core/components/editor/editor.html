@@ -1,6 +1,6 @@
  <div x-data="editor('<p>Hello world! :-)</p>')">
       <template x-if="isLoaded()">
-        <div class="menu">
+        <div class="menu flex gap-2">
           <button
             @click="toggleHeading({ level: 1 })"
             :class="{ 'is-active': isActive('heading', { level: 1 }, updatedAt) }"
@@ -14,9 +14,12 @@
             Italic
           </button>
           <button @click="toggleCodeBlock()" :class="{ 'is-active' : isActive('codeBlock', updatedAt) }">
-            Code Block
+            Code
           </button>
-          <select @change="setCodeBlock($event.target.value)" x-show="isActive('codeBlock', updatedAt)">
+          {% component 'select'
+           id='code-block-language'
+           options=["Plain", "JavaScript", "TypeScript", "Python"] / %}
+          <!-- <select @change="setCodeBlock($event.target.value)" x-show="isActive('codeBlock', updatedAt)">
             <option value="">Plain</option>
             <option value="javascript">JavaScript</option>
             <option value="typescript">TypeScript</option>
@@ -24,7 +27,7 @@
             <option value="html">HTML</option>
             <option value="css">CSS</option>
             <option value="json">JSON</option>
-          </select>
+          </select> -->
         </div>
       </template>
 
