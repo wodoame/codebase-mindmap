@@ -109,6 +109,11 @@ document.addEventListener('alpine:init', () => {
                 const highlighted = hljs.highlight(codeElement.textContent, { language })
                 codeElement.innerHTML = highlighted.value
                 codeElement.className = `language-${language} hljs`
+                
+                // Apply programming font to the code element
+                codeElement.style.fontFamily = "'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace"
+                codeElement.style.fontSize = '0.875rem'
+                codeElement.style.lineHeight = '1.5'
               } catch (error) {
                 console.warn('Failed to highlight code block:', error)
                 // Fallback to auto-detection if specific language fails
@@ -116,6 +121,11 @@ document.addEventListener('alpine:init', () => {
                   const autoHighlighted = hljs.highlightAuto(codeElement.textContent)
                   codeElement.innerHTML = autoHighlighted.value
                   codeElement.className = `hljs`
+                  
+                  // Apply programming font to the fallback as well
+                  codeElement.style.fontFamily = "'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace"
+                  codeElement.style.fontSize = '0.875rem'
+                  codeElement.style.lineHeight = '1.5'
                 } catch (autoError) {
                   console.warn('Auto-highlighting also failed:', autoError)
                 }
