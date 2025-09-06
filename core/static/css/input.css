@@ -68,5 +68,5 @@
 }
 
 .tiptap{
-  @apply border-2 rounded-md focus:border-blue-600; ;
+  @apply p-4 m-2 border-2 rounded-md focus:border-blue-600 focus:outline-0;
 }
