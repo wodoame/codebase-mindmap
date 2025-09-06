@@ -11,8 +11,9 @@ x-data="select('{{id}}')"
     data-dropdown-toggle="dropdown"
     class="option flex text-sm items-center text-gray-800 dark:text-neutral-200"
     type="button"
-  >
-    Click Me<svg
+  > 
+    <span x-text="selectedValue"></span>
+    <svg
       class="w-2.5 h-2.5 ms-3"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
@@ -37,6 +38,7 @@ x-data="select('{{id}}')"
     <ul
       class="py-2 text-sm text-gray-700 dark:text-gray-200"
       aria-labelledby="dropdownDefaultButton"
+      @option-selected="{{onChange}}"
     >
       <template x-for="option in options" :key="option">
         <li>

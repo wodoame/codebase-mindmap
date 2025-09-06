@@ -18,7 +18,9 @@
           </button>
           {% component 'select'
            id='code-block-language'
-           options=["Plain", "JavaScript", "TypeScript", "Python"] / %}
+           options=["Plain", "JavaScript", "TypeScript", "Python"] 
+           onChange="(e)=>setCodeBlock(e.detail.value)"
+           / %}
           <!-- <select @change="setCodeBlock($event.target.value)" x-show="isActive('codeBlock', updatedAt)">
             <option value="">Plain</option>
             <option value="javascript">JavaScript</option>
