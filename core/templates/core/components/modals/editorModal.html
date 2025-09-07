@@ -1,0 +1,12 @@
+{% component "baseModal" %}
+      {% fill "title" %}
+         <h3 x-init="getEditorModal().df.setDataField('title', $el)" class="text-lg font-semibold text-gray-900 dark:text-gray-300">
+          Title
+         </h3>
+      {% endfill %}
+      {% fill "body" %}
+        <div class="p-4" id="editor-container">
+          {% component "editor" / %}
+        </div>
+      {% endfill %}
+{% endcomponent %}
