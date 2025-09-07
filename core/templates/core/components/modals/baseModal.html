@@ -17,9 +17,12 @@
       <div
         class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-100/5"
       >
+      {% slot "title" %}
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-300">
-          {% slot "title" %}Title{% endslot %}
+          {% slot "title_text" %}Title{% endslot %}
+          <!-- probably for changing only the title I'll override this slot-->
         </h3>
+      {% endslot %}
         <button
           type="button"
           @click="close"

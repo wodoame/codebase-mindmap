@@ -1,15 +1,15 @@
 import { select, tree, hierarchy, HierarchyNode } from "d3";
 import { TreeNode } from "./tree-datastructure";
-import { getModal } from "./modals";
+import { getEditorModal} from "./modals";
 
 // Define interfaces
-interface Node {
+interface TNode {
     name: string;
-    children?: Node[];
+    children?: TNode[];
 }
 
 // Extend HierarchyNode to include the properties D3 tree needs
-interface ExtendedHierarchyNode extends HierarchyNode<Node> {
+export interface ExtendedHierarchyNode extends HierarchyNode<TNode> {
     id?: string;  // Change to string to match D3's interface
     x0?: number;
     y0?: number;
@@ -35,7 +35,7 @@ const introductionNode = new TreeNode("Introduction", [cnnArchNode]);
 const rootNode = new TreeNode("Root", [introductionNode, activationFxnNode]);
 
 // Tree data
-const treeData: Node = rootNode.toJSON();
+const treeData: TNode = rootNode.toJSON();
 
 // Set dimensions and margins
 const margin = { top: 20, right: 120, bottom: 20, left: 120 };
@@ -47,7 +47,7 @@ const duration = 750;
 let root: ExtendedHierarchyNode;
 
 // Create tree layout
-const myTree = tree<Node>().size([height, width]);
+const myTree = tree<TNode>().size([height, width]);
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .style("fill", d => d._children ? "lightsteelblue" : "#fff")
             .style("stroke", "steelblue")
             .style("stroke-width", 2)
-            .on('click', ()=>getModal().open()); // Modal click only on rectangle
+            .on('click', (event, d)=>getEditorModal().show(d)); // Modal click only on rectangle
 
         nodeEnter.append('text')
             .attr("dy", ".35em")
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .style("fill-opacity", 1e-6)
             .style("font-size", "12px")
             .style("font-family", "sans-serif")
-            .on('click', ()=>getModal().open()); // Modal click on text too
+            .on('click', (event, d)=>getEditorModal().show(d)); // Modal click on text too
 
         // Add expand/collapse indicator circle
         nodeEnter.append('circle')

@@ -1,3 +1,4 @@
+import { ExtendedHierarchyNode } from "./tree-test";
 class ModalManager{
     modals:any; 
     currentlyOpenModal: ModalInstance | null;  // track the currently opened modal
@@ -35,17 +36,47 @@ class BaseModal{
    }
 }
 
-const getModal = (()=>{
-    let instance: BaseModal | undefined = undefined; 
+class DataFields{
+     // data fields 
+     dataFields: {[key: string]: HTMLElement} = {};
+     setDataField(key:string, value:HTMLElement){
+         this.dataFields[key] = value;
+     }
+ };
+
+class FormFields{
+    // form fields 
+    formFields: {[key: string]: HTMLInputElement} = {};
+
+    setFormField(key: string, value:HTMLInputElement){
+         this.formFields[key] = value; 
+    }
+}
+
+class EditorModal extends BaseModal{
+    df: DataFields;
+    constructor(id:string, df: DataFields){
+        super(id);
+        this.df = df; 
+    }
+    show(node: ExtendedHierarchyNode){
+        const dataFields = this.df.dataFields;
+        dataFields.title.textContent = node.data.name;;
+        this.modal.open();
+    }
+}
+
+const getEditorModal = (()=>{
+    let instance: EditorModal | undefined = undefined; 
     return ()=>{
         if(instance){
             return instance; 
         }
-        // const ff = new FormFields();
-        instance = new BaseModal('base-modal');
+        const df = new DataFields();
+        instance = new EditorModal('editor-modal', df);
         return instance;
     };
 })();
 
-window['getModal'] = getModal; // make it globally accessible for now
-export { modalManager, getModal };
+window['getEditorModal'] = getEditorModal; // make it globally accessible for now
+export { modalManager, getEditorModal };

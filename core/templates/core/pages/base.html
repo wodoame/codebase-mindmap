@@ -93,14 +93,6 @@
     <div id="tree-container"></div>
   </main>
     <div class="bg-gray-900/50 fixed inset-0 z-50 w-full hidden" id="animated-backdrop"></div>
-    {% component "baseModal" id="base-modal" placement='top' animation='none' %}
-      {% fill "title" %}Node Details{% endfill %}
-      {% fill "body" %}
-        <div class="p-4" id="editor-container">
-          {% component "editor" / %}
-        </div>
-      {% endfill %}
-    {% endcomponent %}
-
+    {% component "editorModal" id="editor-modal" placement='top' animation='none' / %}
 </body>
 </html>
