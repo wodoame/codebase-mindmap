@@ -183,6 +183,13 @@ document.addEventListener('alpine:init', () => {
       setJSON(json: any) {
         editor.commands.setContent(json)
       },
+      
+      // Focus the editor
+      focus() {
+        if (editor) {
+          editor.commands.focus()
+        }
+      },
     }
   })
 })

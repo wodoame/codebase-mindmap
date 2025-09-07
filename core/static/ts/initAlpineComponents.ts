@@ -41,6 +41,7 @@ function createModalInstance(id: string){
 
 function createSelectInstance(id: string){
     // This component dispatches a custom event 'option-selected' when an option is selected
+    console.log(`Select component with id ${id} initialized`);
     return {
         isOpen: false,
         selectedValue: undefined,

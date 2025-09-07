@@ -1,28 +1,30 @@
- <div x-data="editor('<p>Hello world! :-)</p>')">
+{# isOpen is provided by the parent (modal) #} 
+ <div x-data="editor('<p>Hello world! :-)</p>')"
+   x-init="$watch('isOpen', value => value? focus() : null)"
+   >
     <template x-if="isLoaded()">
     <div class="menu flex gap-2 items-center">
+          {% component "editPreviewTabs" / %}
           <button
             @click="toggleHeading({ level: 1 })"
             :class="{ 'is-active': isActive('heading', { level: 1 }, updatedAt) }"
           >
-            H1
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heading1-icon lucide-heading-1"><path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="m17 12 3-2v8"/></svg>
           </button>
           <button @click="toggleBold()" :class="{ 'is-active' : isActive('bold', updatedAt) }">
-            Bold
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bold-icon lucide-bold"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg>
           </button>
           <button @click="toggleItalic()" :class="{ 'is-active' : isActive('italic', updatedAt) }">
-            Italic
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-italic-icon lucide-italic"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg>
           </button>
           <button @click="toggleCodeBlock()" :class="{ 'is-active' : isActive('codeBlock', updatedAt) }">
-            Code
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-icon lucide-code"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
           </button>
           {% component 'select'
            id='code-block-language'
            options=["Plain", "JavaScript", "TypeScript", "Python"] 
            onChange="(e)=>setCodeBlock(e.detail.value)"
            / %}
-
-          {% component "editPreviewTabs" / %}
           <!-- <select @change="setCodeBlock($event.target.value)" x-show="isActive('codeBlock', updatedAt)">
             <option value="">Plain</option>
             <option value="javascript">JavaScript</option>
