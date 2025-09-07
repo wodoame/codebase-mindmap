@@ -5,16 +5,26 @@ export class TreeNode {
     public name: string;
     public children: TreeNode[];
     public parent: TreeNode | null;
+    public HTML: string;
 
-    constructor(name: string, children: TreeNode[] = []) {
+    constructor(name: string, children: TreeNode[] = [], HTML: string = '') {
         this.name = name;
         this.children = children;
         this.parent = null;
-        
+        this.HTML = HTML;
+
         // Set parent reference for all children
         this.children.forEach(child => {
             child.parent = this;
         });
+    }
+
+    getHTML(): string {
+        return this.HTML;
+    }
+
+    setHTML(html: string): void {
+        this.HTML = html;
     }
 
     /**
@@ -63,7 +73,8 @@ export class TreeNode {
      */
     toJSON(): any {
         const result: any = {
-            name: this.name
+            name: this.name,
+            HTML: this.HTML
         };
 
         if (this.children.length > 0) {

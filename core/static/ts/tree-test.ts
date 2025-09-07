@@ -5,6 +5,7 @@ import { getEditorModal} from "./modals";
 // Define interfaces
 interface TNode {
     name: string;
+    HTML?: string;
     children?: TNode[];
 }
 

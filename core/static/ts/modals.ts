@@ -1,4 +1,12 @@
 import { ExtendedHierarchyNode } from "./tree-test";
+import { getEditor } from "./editor";
+
+type ModalInstance = {
+    toggleSideEffects: (force:boolean)=>void;
+    open: ()=>void; 
+    close: ()=>void; 
+    isOpen: boolean; 
+}
 class ModalManager{
     modals:any; 
     currentlyOpenModal: ModalInstance | null;  // track the currently opened modal
@@ -55,14 +63,23 @@ class FormFields{
 
 class EditorModal extends BaseModal{
     df: DataFields;
+    activeNode: ExtendedHierarchyNode | null = null;
     constructor(id:string, df: DataFields){
         super(id);
         this.df = df; 
     }
     show(node: ExtendedHierarchyNode){
+        this.activeNode = node;
         const dataFields = this.df.dataFields;
-        dataFields.title.textContent = node.data.name;;
+        dataFields.title.textContent = node.data.name;
+        getEditor()?.setHTML(node.data.HTML || '');
         this.modal.open();
+    }
+
+    save(){
+        if(this.activeNode){
+            this.activeNode.data.HTML = getEditor()?.getHTML();
+        }
     }
 }
 

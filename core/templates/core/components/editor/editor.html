@@ -1,5 +1,7 @@
 {# isOpen is provided by the parent (modal) #} 
- <div x-data="editor('<p>Hello world! :-)</p>')"
+ <div
+   @editor-update="getEditorModal().save()"
+   x-data="editor('<p>Hello world! :-)</p>')"
    x-init="$watch('isOpen', value => value? focus() : null)"
    >
     <template x-if="isLoaded()">

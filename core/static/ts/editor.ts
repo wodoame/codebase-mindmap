@@ -15,6 +15,47 @@ import json from 'highlight.js/lib/languages/json'
 
 // Create lowlight instance
 const lowlight = createLowlight()
+let getEditor: () => AlpineEditor | undefined;
+
+interface AlpineEditor {
+  // Properties
+  updatedAt: number;
+  state: 'edit' | 'preview';
+  previewContent: string;
+  
+  // Lifecycle methods
+  init(): void;
+  isLoaded(): boolean;
+  
+  // Editor state methods
+  isActive(type: any, opts?: any): boolean;
+  
+  // Formatting methods
+  toggleHeading(opts: any): void;
+  toggleBold(): void;
+  toggleItalic(): void;
+  toggleCodeBlock(): void;
+  setCodeBlock(language?: string): void;
+  
+  // Preview mode methods
+  updatePreview(): void;
+  switchToEdit(): void;
+  switchToPreview(): void;
+  isEditMode(): boolean;
+  isPreviewMode(): boolean;
+  
+  // Content retrieval methods
+  getHTML(): string;
+  getJSON(): any;
+  getText(): string;
+  
+  // Content setting methods
+  setHTML(html: string): void;
+  setJSON(json: any): void;
+  
+  // Focus method
+  focus(): void;
+}
 
 // Register languages
 lowlight.register('javascript', javascript as any)
@@ -25,7 +66,7 @@ lowlight.register('css', css as any)
 lowlight.register('json', json as any)
 
 document.addEventListener('alpine:init', () => {
-  Alpine.data('editor', (content:string) => {
+  Alpine.data('editor', (content:string): AlpineEditor => {
     let editor: Editor; 
     // Alpine's reactive engine automatically wraps component properties in proxy objects.
     // If you attempt to use a proxied editor instance to apply a transaction, it will cause a 
@@ -58,6 +99,7 @@ document.addEventListener('alpine:init', () => {
             _this.updatePreview()
           },
           onUpdate({ editor }) {
+            _this.$dispatch('editor-update', {})
             _this.updatedAt = Date.now()
             _this.updatePreview()
           },
@@ -65,9 +107,11 @@ document.addEventListener('alpine:init', () => {
             _this.updatedAt = Date.now()
           },
         })
+        getEditor = () => this;
+        window['getEditor'] = getEditor; 
       },
       isLoaded() {
-        return editor
+        return editor !== undefined;
       },
       isActive(type: any, opts = {}) {
         return editor.isActive(type, opts)
@@ -193,3 +237,5 @@ document.addEventListener('alpine:init', () => {
     }
   })
 })
+
+export { getEditor }; 
