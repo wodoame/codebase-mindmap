@@ -1,5 +1,5 @@
 import { select, tree, hierarchy, HierarchyNode } from "d3";
-import { TreeNode } from "./tree-datastructure";
+import { TreeNode, Tree} from "./tree-datastructure";
 import { getEditorModal} from "./modals";
 
 // Define interfaces
@@ -340,3 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
         update(d);
     }
 });
+
+
+function convertD3TreeToTreeStructure(d3Root: ExtendedHierarchyNode): Tree {
+    return Tree.fromD3Node(d3Root);
+}
