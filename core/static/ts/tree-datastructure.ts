@@ -1,3 +1,5 @@
+import { ExtendedHierarchyNode } from "./tree-test";
+
 /**
  * Node class for representing a single node in the tree
  */
@@ -114,6 +116,30 @@ export class Tree {
         const rootNode = createNode(jsonData);
         return new Tree(rootNode);
     }
+
+    // Add this static method to the Tree class
+    static fromD3Node(d3Node: ExtendedHierarchyNode): Tree {
+        const createNode = (nodeData: ExtendedHierarchyNode): TreeNode => {
+            const children: TreeNode[] = [];
+            
+            // Check both children and _children properties
+            const nodeChildren = nodeData.children || nodeData._children;
+            
+            if (nodeChildren && Array.isArray(nodeChildren)) {
+                nodeChildren.forEach((childData: ExtendedHierarchyNode) => {
+                    children.push(createNode(childData));
+                });
+            }
+            
+            // Extract HTML from data property, fallback to empty string
+            const html = nodeData.data.HTML || '';
+            
+            return new TreeNode(nodeData.data.name, children, html);
+        };
+
+    const rootNode = createNode(d3Node);
+    return new Tree(rootNode);
+}
 
     /**
      * Convert the entire tree to JSON format
