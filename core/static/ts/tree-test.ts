@@ -1,6 +1,7 @@
 import { select, tree, hierarchy, HierarchyNode } from "d3";
 import { TreeNode, Tree} from "./tree-datastructure";
 import { getEditorModal} from "./modals";
+import { D3TreeManager } from "./d3-tree-manager";
 
 // Define interfaces
 interface TNode {
@@ -50,6 +51,9 @@ let root: ExtendedHierarchyNode;
 // Create tree layout
 const myTree = tree<TNode>().size([height, width]);
 
+// Create tree manager instance
+let treeManager: D3TreeManager;
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
     // Append SVG to container
@@ -64,6 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
     root = hierarchy(treeData, d => d.children) as ExtendedHierarchyNode;
     root.x0 = height / 2;
     root.y0 = 0;
+
+    // Initialize tree manager with update callback
+    treeManager = new D3TreeManager(update);
 
     // Collapse after the second level (optional, for interactivity)
     if (root.children) {
@@ -350,4 +357,48 @@ function getFullTree(): Tree {
     return convertD3TreeToTreeStructure(root);
 }
 
-window['getFullTree'] = getFullTree; // just for testing
+// Tree manipulation functions
+function addNodeToTree(parentName: string, nodeName: string, nodeHTML: string = ''): boolean {
+    if (!treeManager) return false;
+    
+    const parentNode = treeManager.findNodeByName(root, parentName);
+    if (parentNode) {
+        treeManager.addNode(parentNode, nodeName, nodeHTML);
+        return true;
+    }
+    return false;
+}
+
+function deleteNodeFromTree(nodeName: string): boolean {
+    if (!treeManager) return false;
+    
+    const nodeToDelete = treeManager.findNodeByName(root, nodeName);
+    if (nodeToDelete && nodeToDelete !== root) {
+        return treeManager.deleteNode(nodeToDelete);
+    }
+    return false;
+}
+
+function moveNodeInTree(nodeToMoveName: string, newParentName: string): boolean {
+    if (!treeManager) return false;
+    
+    const nodeToMove = treeManager.findNodeByName(root, nodeToMoveName);
+    const newParent = treeManager.findNodeByName(root, newParentName);
+    
+    if (nodeToMove && newParent) {
+        return treeManager.moveNode(nodeToMove, newParent);
+    }
+    return false;
+}
+
+function findNodeInTree(nodeName: string): ExtendedHierarchyNode | null {
+    if (!treeManager) return null;
+    return treeManager.findNodeByName(root, nodeName);
+}
+
+// Export functions for external use
+window['getFullTree'] = getFullTree;
+window['addNodeToTree'] = addNodeToTree;
+window['deleteNodeFromTree'] = deleteNodeFromTree; 
+window['moveNodeInTree'] = moveNodeInTree;
+window['findNodeInTree'] = findNodeInTree;
