@@ -345,3 +345,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function convertD3TreeToTreeStructure(d3Root: ExtendedHierarchyNode): Tree {
     return Tree.fromD3Node(d3Root);
 }
+
+function getFullTree(): Tree {
+    return convertD3TreeToTreeStructure(root);
+}
+
+window['getFullTree'] = getFullTree; // just for testing
