@@ -1,12 +1,5 @@
 import { hierarchy } from "d3";
-import { ExtendedHierarchyNode } from "./tree-test";
-
-interface TNode {
-    name: string;
-    HTML?: string;
-    children?: TNode[];
-}
-
+import { ExtendedHierarchyNode, TNode } from "./tree-test";
 /**
  * D3TreeManager - Manages operations on D3 tree structures
  * Provides methods to add and delete nodes while maintaining tree integrity

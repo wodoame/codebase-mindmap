@@ -4,7 +4,7 @@ import { getEditorModal} from "./modals";
 import { D3TreeManager } from "./d3-tree-manager";
 
 // Define interfaces
-interface TNode {
+export interface TNode {
     name: string;
     HTML?: string;
     children?: TNode[];
@@ -397,6 +397,8 @@ function findNodeInTree(nodeName: string): ExtendedHierarchyNode | null {
 }
 
 // Export functions for external use
+
+export {treeManager}; 
 window['getFullTree'] = getFullTree;
 window['addNodeToTree'] = addNodeToTree;
 window['deleteNodeFromTree'] = deleteNodeFromTree; 

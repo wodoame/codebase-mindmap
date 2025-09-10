@@ -1,5 +1,7 @@
 import { ExtendedHierarchyNode } from "./tree-test";
 import { getEditor } from "./editor";
+import { treeManager } from "./tree-test";
+import { D3TreeManager } from "./d3-tree-manager";
 
 type ModalInstance = {
     toggleSideEffects: (force:boolean)=>void;
@@ -66,7 +68,7 @@ class EditorModal extends BaseModal{
     activeNode: ExtendedHierarchyNode | null = null;
     constructor(id:string, df: DataFields){
         super(id);
-        this.df = df; 
+        this.df = df;
     }
     show(node: ExtendedHierarchyNode){
         this.activeNode = node;
@@ -79,6 +81,16 @@ class EditorModal extends BaseModal{
     save(){
         if(this.activeNode){
             this.activeNode.data.HTML = getEditor()?.getHTML();
+        }
+    }
+
+    addChildNode(){
+        if(this.activeNode){
+            const newNode = treeManager.addNode(this.activeNode, 'New Node', '<p>New Node</p>');
+            console.log('Added new node:', newNode);
+            // Optionally, you can set the new node as the active node and update the modal display
+            // this.show(newNode);
+            this.close();
         }
     }
 }
