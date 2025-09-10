@@ -26,61 +26,19 @@ export class D3TreeManager {
             children: []
         };
 
-        // If parent is collapsed, we need to add to _children
-        if (parent._children) {
-            // Parent is collapsed, add to _children
-            const newChildData = [...(parent.data.children || []), newNodeData];
-            parent.data.children = newChildData;
-            
-            // Recreate the hierarchy for the parent's _children
-            const tempHierarchy = hierarchy(parent.data, d => d.children);
-            const newChildren = tempHierarchy.children as ExtendedHierarchyNode[];
-            
-            if (newChildren) {
-                // Copy over the D3 properties to maintain state
-                newChildren.forEach((child, index) => {
-                    if (parent._children && parent._children[index]) {
-                        child.x0 = parent._children[index].x0;
-                        child.y0 = parent._children[index].y0;
-                        child._children = parent._children[index]._children;
-                    } else {
-                        // New node - set default position
-                        child.x0 = parent.x0;
-                        child.y0 = parent.y0;
-                    }
-                });
-                
-                parent._children = newChildren;
-            }
-        } else {
-            // Parent is expanded, add to children
-            if (!parent.data.children) {
-                parent.data.children = [];
-            }
-            parent.data.children.push(newNodeData);
-
-            // Create new child node hierarchy
-            const newChildHierarchy = hierarchy(newNodeData, d => d.children) as ExtendedHierarchyNode;
-            // Set parent reference and position
-            (newChildHierarchy as any).parent = parent;
-            newChildHierarchy.x0 = parent.x0;
-            newChildHierarchy.y0 = parent.y0;
-
-            // Add to parent's children
-            if (!parent.children) {
-                parent.children = [];
-            }
-            parent.children.push(newChildHierarchy);
+        // Add to parent's data structure
+        if (!parent.data.children) {
+            parent.data.children = [];
         }
+        parent.data.children.push(newNodeData);
 
-        // Trigger update if callback is provided
+        // Let the update function regenerate the entire hierarchy and layout
         if (this.updateCallback) {
             this.updateCallback(parent);
         }
 
-        // Return the newly created node (from either children or _children)
-        const targetChildren = parent.children || parent._children;
-        return targetChildren![targetChildren!.length - 1];
+        // Find the newly added node after the update
+        return this.findNodeByName(parent, nodeName) || parent;
     }
 
     /**

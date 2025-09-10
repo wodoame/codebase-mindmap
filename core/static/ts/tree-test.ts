@@ -47,6 +47,7 @@ const height = 500 - margin.top - margin.bottom;
 let i = 0;
 const duration = 750;
 let root: ExtendedHierarchyNode;
+let shouldRegenerateHierarchy = false;
 
 // Create tree layout
 const myTree = tree<TNode>().size([height, width]);
@@ -69,8 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
     root.x0 = height / 2;
     root.y0 = 0;
 
-    // Initialize tree manager with update callback
-    treeManager = new D3TreeManager(update);
+    // Initialize tree manager with update callback that regenerates hierarchy
+    const updateWithRegeneration = (source: ExtendedHierarchyNode) => {
+        shouldRegenerateHierarchy = true;
+        update(source);
+    };
+    
+    treeManager = new D3TreeManager(updateWithRegeneration);
 
     // Collapse after the second level (optional, for interactivity)
     if (root.children) {
@@ -89,6 +95,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update function for drawing the tree
     function update(source: ExtendedHierarchyNode): void {
+        // Only regenerate hierarchy if data structure changed (not for expand/collapse)
+        if (shouldRegenerateHierarchy) {
+            // Store node positions and states before regeneration
+            const nodeStates = new Map<string, {
+                x0?: number;
+                y0?: number;
+                isCollapsed: boolean;
+                rectWidth?: number;
+                rectHeight?: number;
+            }>();
+            
+            // Store all node states
+            const storeNodeStates = (node: ExtendedHierarchyNode) => {
+                nodeStates.set(node.data.name, {
+                    x0: node.x0,
+                    y0: node.y0,
+                    isCollapsed: !!node._children,
+                    rectWidth: node.rectWidth,
+                    rectHeight: node.rectHeight
+                });
+                const children = node.children || node._children;
+                if (children) {
+                    children.forEach(storeNodeStates);
+                }
+            };
+            storeNodeStates(root);
+            
+            // Regenerate hierarchy from root data
+            const newRoot = hierarchy(root.data, d => d.children) as ExtendedHierarchyNode;
+            
+            // Restore node states
+            const restoreNodeStates = (node: ExtendedHierarchyNode) => {
+                const savedState = nodeStates.get(node.data.name);
+                if (savedState) {
+                    // Restore position and properties
+                    node.x0 = savedState.x0;
+                    node.y0 = savedState.y0;
+                    node.rectWidth = savedState.rectWidth;
+                    node.rectHeight = savedState.rectHeight;
+                    
+                    // Restore collapsed state
+                    if (savedState.isCollapsed && node.children) {
+                        node._children = node.children as ExtendedHierarchyNode[];
+                        node.children = undefined;
+                    }
+                } else {
+                    // New node - set default position from parent or source
+                    node.x0 = source.x0 || height / 2;
+                    node.y0 = source.y0 || 0;
+                }
+                
+                const children = node.children || node._children;
+                if (children) {
+                    children.forEach(restoreNodeStates);
+                }
+            };
+            
+            // Set root position
+            newRoot.x0 = height / 2;
+            newRoot.y0 = 0;
+            restoreNodeStates(newRoot);
+            
+            // Update the global root reference
+            root = newRoot;
+            
+            // Reset the flag
+            shouldRegenerateHierarchy = false;
+        }
+
         // Compute new tree layout
         const treeData = myTree(root);
         const nodes = treeData.descendants() as ExtendedHierarchyNode[];
@@ -338,12 +413,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Toggle children on click
     function click(event: MouseEvent, d: ExtendedHierarchyNode): void {
         if (d.children) {
+            // Collapsing - hide children
             d._children = d.children as ExtendedHierarchyNode[];
-            d.children = undefined;  // Use undefined instead of null
+            d.children = undefined;
         } else {
-            d.children = d._children || undefined;  // Handle null case
+            // Expanding - show children  
+            d.children = d._children || undefined;
             d._children = null;
         }
+        
+        // Don't regenerate hierarchy for expand/collapse - just update layout
+        shouldRegenerateHierarchy = false;
         update(d);
     }
 });
