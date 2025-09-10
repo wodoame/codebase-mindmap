@@ -1,12 +1,17 @@
 {% component "baseModal" id="editor-modal" placement='top' animation='none' %}
       {% fill "title" %}
       <div class="flex items-center justify-between gap-8">
-        <h3 x-init="getEditorModal().df.setDataField('title', $el)" class="text-lg font-semibold text-gray-900 dark:text-gray-300">
+        <h3 
+        x-init="getEditorModal().df.setDataField('title', $el)" 
+        class="text-lg font-semibold text-gray-900 dark:text-gray-300">
          Title
         </h3>
         <!-- node options -->
         <div class="flex items-center gap-2">
-           <div title="Add a child node" @click="getEditorModal().openAddChildForm()" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded cursor-pointer">
+           <div 
+            title="Add a child node"
+            @click="getEditorModal().openAddChildForm()"
+            class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded cursor-pointer">
              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
            </div>
         </div>
@@ -17,7 +22,10 @@
           {% component "editor" / %}
         </div>
         {% component "focusedElement" id="fe-add-node" %}
-         <form class="p-4 bg-white" @keydown.enter="$event.preventDefault();" id="add-node-form">   
+         <form 
+         class="p-4 bg-white" 
+         @keydown.enter="$event.preventDefault();" 
+         id="add-node-form">   
                <div class="relative">
                     <input type="text" @keyup.enter="getEditorModal().addChildNode()" 
                     x-init="$watch('isOpen', value => value?$el.focus():null)"
@@ -28,7 +36,10 @@
                      />
                     <!-- <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button> -->
                 </div>
-                <button type="button" @click="getEditorModal().addChildNode()" class="text-white mt-4 flex justify-center items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-4 py-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <button 
+                type="button" 
+                @click="getEditorModal().addChildNode()" 
+                class="text-white mt-4 flex justify-center items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-4 py-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                    Add Node
                 </button>
             </form>

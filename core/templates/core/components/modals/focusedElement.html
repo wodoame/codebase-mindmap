@@ -1,7 +1,7 @@
 <div class="absolute inset-0 bg-gray-900/50 flex justify-center items-center"
   x-data="focusedElement('{{id}}')"
   x-show="isOpen" @keydown.escape="close"
-  @click.outside="close">
+  @click="handleClickOutside">
    <div class="w-full md:max-w-md bg-white rounded-md">
       <!-- heading -->
        <div

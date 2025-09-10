@@ -77,7 +77,13 @@ function createFocusedElementInstance(id: string){
         },
         close(){
             this.isOpen = false;
+        }, 
+        handleClickOutside(e: Event){
+            if(e.target == e.currentTarget){
+                this.close();
+            }
         }
+        
     }
 }
 
