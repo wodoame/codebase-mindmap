@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs';
 import { modalManager } from './modals';
-import { selectedRect } from '@tiptap/pm/tables';
 import { getDropdown } from './utils';
+import { componentManager } from './managers';
 
 function createModalInstance(id: string){
     return {
@@ -65,9 +65,26 @@ function createSelectInstance(id: string){
     }
 }
 
+function createFocusedElementInstance(id: string){
+    return {
+        isOpen: false,
+        init(){
+            componentManager.setInstance(id, this);
+            console.log(`Focused element component with id ${id} initialized`);
+        },
+        open(){
+            this.isOpen = true;
+        },
+        close(){
+            this.isOpen = false;
+        }
+    }
+}
+
 function handleAlpineInitialization(){
     Alpine.data('baseModal', createModalInstance);
     Alpine.data('select', createSelectInstance);
+    Alpine.data('focusedElement', createFocusedElementInstance);
     // more stuff can be here to all be initialized at once
 }
 

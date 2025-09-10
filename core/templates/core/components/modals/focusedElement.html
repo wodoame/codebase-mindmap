@@ -1,5 +1,8 @@
-<div class="absolute inset-0 bg-gray-900/50 flex justify-center items-center">
-   <div class="w-full bg-white">
+<div class="absolute inset-0 bg-gray-900/50 flex justify-center items-center"
+  x-data="focusedElement('{{id}}')"
+  x-show="isOpen" @keydown.escape="close"
+  @click.outside="close">
+   <div class="w-full md:max-w-md bg-white rounded-md">
       <!-- heading -->
        <div
         class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-100/5"
