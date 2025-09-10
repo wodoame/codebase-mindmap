@@ -70,3 +70,7 @@
 .tiptap{
   @apply p-4 m-2 border-2 rounded-md focus:border-blue-600 focus:outline-0;
 }
+
+.input{
+  @apply w-full border-2 p-2 rounded focus:border-blue-600 focus:outline-0;
+}
