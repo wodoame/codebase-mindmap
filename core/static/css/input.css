@@ -64,7 +64,8 @@
 /* editor */
 
 #editor-container{
-  @apply overflow-y-auto max-h-[70vh] md:max-h-[calc(100vh-6rem)];
+  /* @apply overflow-y-auto max-h-[70vh] md:max-h-[calc(100vh-6rem)]; */
+  @apply overflow-y-auto h-[70vh] md:h-[calc(100vh-8rem)];
 }
 
 .tiptap{

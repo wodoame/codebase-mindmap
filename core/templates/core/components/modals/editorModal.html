@@ -1,4 +1,4 @@
-{% component "baseModal" id="editor-modal" placement='top' animation='none' %}
+{% component "baseModal" id="editor-modal" animation='none' %}
       {% fill "title" %}
       <div class="flex items-center justify-between gap-8">
         <h3 
@@ -28,7 +28,7 @@
          id="add-node-form">   
                <div class="relative">
                     <input type="text" @keyup.enter="getEditorModal().addChildNode()" 
-                    x-init="$watch('isOpen', value => value?$el.focus():null)"
+                    x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
                     name="node_name"
                     placeholder="Enter node name"
                     required
