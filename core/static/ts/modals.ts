@@ -1,7 +1,6 @@
 import { ExtendedHierarchyNode } from "./tree-test";
 import { getEditor } from "./editor";
 import { treeManager } from "./tree-test";
-import { D3TreeManager } from "./d3-tree-manager";
 import { componentManager } from "./managers";
 
 type ModalInstance = {
@@ -92,7 +91,7 @@ class EditorModal extends BaseModal{
         if(this.activeNode){
             const form = document.getElementById('add-node-form') as HTMLFormElement;
             if(form.checkValidity()){
-                const values = htmx.values(form);
+                const values = window['htmx'].values(form);
                 console.log(values.node_name);
                 treeManager.addNode(this.activeNode, values.node_name);
                 componentManager.getInstance('fe-add-node')?.close();
