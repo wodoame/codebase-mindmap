@@ -54,8 +54,15 @@ const duration = 750;
 let root: ExtendedHierarchyNode;
 let shouldRegenerateHierarchy = false;
 
-// Create tree layout
-const myTree = tree<TNode>().size([height, width]);
+// Layout configuration constants
+const LEVEL_WIDTH = 200;              // Horizontal distance per depth level
+const NODE_VERTICAL_GAP = 55;         // Minimum vertical gap between adjacent nodes
+
+// Create tree layout with fixed node sizing (d3 will position by depth * LEVEL_WIDTH horizontally)
+// and custom separation influencing how siblings vs cousins are spaced vertically.
+const myTree = tree<TNode>()
+    .nodeSize([NODE_VERTICAL_GAP, LEVEL_WIDTH])
+    .separation((a, b) => (a.parent === b.parent ? 1 : 1.4));
 
 // Create tree manager instance
 let treeManager: D3TreeManager;
@@ -169,42 +176,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             shouldRegenerateHierarchy = false;
         }
 
-        // Compute new tree layout
+        // Compute new tree layout (d3 will assign x = vertical, y = horizontal based on nodeSize & depth)
         const treeData = myTree(root);
         const nodes = treeData.descendants() as ExtendedHierarchyNode[];
-        const links = treeData.descendants().slice(1) as ExtendedHierarchyNode[];
+        const links = nodes.slice(1) as ExtendedHierarchyNode[];
 
-        // Normalize depth - ensure consistent horizontal positioning for same-level nodes
-        const levelSpacing = 200; // Fixed spacing between levels
-        nodes.forEach(d => { 
-            d.y = d.depth * levelSpacing; // Override D3's calculated y position with consistent depth-based positioning
+        // Enforce consistent horizontal spacing based on depth using dynamic width + gap
+        const depthWidths: Record<number, number> = {};
+        nodes.forEach(n => {
+            const w = n.rectWidth || 0;
+            depthWidths[n.depth] = Math.max(depthWidths[n.depth] || 0, w);
         });
+        const DEPTH_GAP = 180; // base gap between levels
+        const cumulativeX: Record<number, number> = {};
+        let running = 0;
+        Object.keys(depthWidths).sort((a,b)=>parseInt(a)-parseInt(b)).forEach(dStr => {
+            const d = parseInt(dStr);
+            running += (d === 0 ? 0 : (depthWidths[d-1] || 0) + DEPTH_GAP);
+            cumulativeX[d] = running;
+        });
+        nodes.forEach(n => { n.y = cumulativeX[n.depth]; });
 
-        // Align nodes of the same depth vertically with even spacing
-        const nodesByDepth: { [depth: number]: ExtendedHierarchyNode[] } = {};
-        nodes.forEach(d => {
-            if (!nodesByDepth[d.depth]) {
-                nodesByDepth[d.depth] = [];
-            }
-            nodesByDepth[d.depth].push(d);
-        });
-
-        // Distribute nodes at each depth level evenly in vertical space
-        Object.keys(nodesByDepth).forEach(depthStr => {
-            const depth = parseInt(depthStr);
-            const nodesAtDepth = nodesByDepth[depth];
-            
-            if (nodesAtDepth.length === 1) {
-                // Single node - center it
-                nodesAtDepth[0].x = height / 2;
-            } else {
-                // Multiple nodes - distribute evenly
-                const spacing = height / (nodesAtDepth.length + 1);
-                nodesAtDepth.forEach((node, index) => {
-                    node.x = spacing * (index + 1);
-                });
-            }
-        });
+        // Vertically center tree (x axis) after D3 positioning
+        const xExtent = [Math.min(...nodes.map(n => n.x!)), Math.max(...nodes.map(n => n.x!))];
+        const currentSpan = xExtent[1] - xExtent[0];
+        const offset = (height - currentSpan) / 2 - xExtent[0];
+        if (isFinite(offset)) nodes.forEach(n => { n.x = (n.x || 0) + offset; });
 
         // Nodes
         const node = svg.selectAll<SVGGElement, ExtendedHierarchyNode>('g.node')
