@@ -2,6 +2,7 @@ import Alpine from 'alpinejs';
 import { modalManager } from './modals';
 import { getDropdown } from './utils';
 import { componentManager } from './managers';
+import { createToastContainer } from './toast';
 
 function createModalInstance(id: string){
     return {
@@ -39,12 +40,23 @@ function createModalInstance(id: string){
     }
 }
 
-function createSelectInstance(id: string){
+interface SelectInstance {
+    isOpen: boolean;
+    selectedValue: string | undefined;
+    options: string[];
+    init(): void;
+    select(value: string): void;
+    open(): void;
+    close(): void;
+    $refs?: any;
+}
+
+function createSelectInstance(id: string): SelectInstance {
     // This component dispatches a custom event 'option-selected' when an option is selected
     console.log(`Select component with id ${id} initialized`);
     return {
         isOpen: false,
-        selectedValue: undefined,
+        selectedValue: undefined as string | undefined,
         options: [],
         init(){
             this.options = JSON.parse(
@@ -91,6 +103,7 @@ function handleAlpineInitialization(){
     Alpine.data('baseModal', createModalInstance);
     Alpine.data('select', createSelectInstance);
     Alpine.data('focusedElement', createFocusedElementInstance);
+    Alpine.data('toastContainer', createToastContainer);
     // more stuff can be here to all be initialized at once
 }
 

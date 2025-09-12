@@ -22,6 +22,8 @@ interface AlpineEditor {
   updatedAt: number;
   state: 'edit' | 'preview';
   previewContent: string;
+  $refs?: any;
+  $dispatch?: (event: string, data?: any) => void;
   
   // Lifecycle methods
   init(): void;
@@ -99,7 +101,7 @@ document.addEventListener('alpine:init', () => {
             _this.updatePreview()
           },
           onUpdate({ editor }) {
-            _this.$dispatch('editor-update', {})
+            _this.$dispatch!('editor-update', {})
             _this.updatedAt = Date.now()
             _this.updatePreview()
           },
