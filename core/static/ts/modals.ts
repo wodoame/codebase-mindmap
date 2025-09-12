@@ -10,32 +10,41 @@ type ModalInstance = {
     isOpen: boolean; 
 }
 class ModalManager{
-    modals:any; 
+    private static instance: ModalManager;
+    private modals: Map<string, ModalInstance> = new Map();
     currentlyOpenModal: ModalInstance | null;  // track the currently opened modal
-    constructor(){
-        this.modals = {}; // a store of created modals
+    
+    // constructor is private to enforce singleton pattern
+    private constructor(){
         this.currentlyOpenModal = null;
     }
 
-    createModal(id: string, modalInstance: ModalInstance){
-        this.modals[id] = modalInstance; 
+    static getInstance(): ModalManager {
+        if (!ModalManager.instance) {
+            ModalManager.instance = new ModalManager();
+        }
+        return ModalManager.instance;
+    }
+
+    registerModal(id: string, modalInstance: ModalInstance){
+        this.modals.set(id, modalInstance);
     }
 
     getModal(id: string){
-        return this.modals[id];
+        return this.modals.get(id);
     }
 
 
 }
 
-const modalManager = new ModalManager();
+const modalManager = ModalManager.getInstance();
 
 // link a modal with this class to control basic modal functionality
 // The modal classes here are basically proxy classes for controlling the actual modal instance created using Alpine.js
 class BaseModal{
    modal: ModalInstance;
    constructor(id: string){
-        this.modal = modalManager.getModal(id);
+        this.modal = modalManager.getModal(id)!;
    }
    open(){
       this.modal.open();
@@ -48,31 +57,48 @@ class BaseModal{
 
 class DataFields{
      // data fields 
-     dataFields: {[key: string]: HTMLElement} = {};
-     setDataField(key:string, value:HTMLElement){
+     private dataFields: Record<string, HTMLElement> = {};
+     getFields(){
+         return this.dataFields;
+     }
+     set(key:string, value:HTMLElement){
          this.dataFields[key] = value;
      }
  };
 
 class FormFields{
     // form fields 
-    formFields: {[key: string]: HTMLInputElement} = {};
-
-    setFormField(key: string, value:HTMLInputElement){
+    private formFields: Record<string, HTMLInputElement> = {};
+    getFields(){
+        return this.formFields;
+    }
+    set(key: string, value:HTMLInputElement){
          this.formFields[key] = value; 
     }
 }
 
 class EditorModal extends BaseModal{
-    df: DataFields;
-    activeNode: ExtendedHierarchyNode | null = null;
-    constructor(id:string, df: DataFields){
+    private static instance: EditorModal;
+    private df: DataFields;
+    private activeNode: ExtendedHierarchyNode | null = null;
+
+    private constructor(id:string, df: DataFields){
         super(id);
         this.df = df;
     }
+
+    // Singleton
+    static getInstance(): EditorModal {
+        if (!EditorModal.instance) {
+            const df = new DataFields();
+            EditorModal.instance = new EditorModal("editor-modal", df);
+        }
+        return EditorModal.instance;
+    }
+
     show(node: ExtendedHierarchyNode){
         this.activeNode = node;
-        const dataFields = this.df.dataFields;
+        const dataFields = this.df.getFields();
         dataFields.title.textContent = node.data.name;
         getEditor()?.setHTML(node.data.HTML || '');
         this.modal.open();
@@ -104,17 +130,6 @@ class EditorModal extends BaseModal{
     }
 }
 
-const getEditorModal = (()=>{
-    let instance: EditorModal | undefined = undefined; 
-    return ()=>{
-        if(instance){
-            return instance; 
-        }
-        const df = new DataFields();
-        instance = new EditorModal('editor-modal', df);
-        return instance;
-    };
-})();
-
-window['getEditorModal'] = getEditorModal; // make it globally accessible for now
+const getEditorModal = () => EditorModal.getInstance();
+window['getEditorModal'] = getEditorModal;
 export { modalManager, getEditorModal };
