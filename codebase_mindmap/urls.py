@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include("django_components.urls")),
     path('', core_views.Index.as_view(), name='index'),
     path('test/', core_views.Sandbox.as_view(), name='editor'),
+    path('api/', include('api.urls')),
 ]
