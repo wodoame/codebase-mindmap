@@ -2,6 +2,7 @@ import { select, tree, hierarchy, HierarchyNode } from "d3";
 import { TreeNode, Tree} from "./tree-datastructure";
 import { getEditorModal} from "./modals";
 import { D3TreeManager } from "./d3-tree-manager";
+import { fetchJSONData } from "./utils";
 
 // Define interfaces
 export interface TNode {
@@ -20,24 +21,28 @@ export interface ExtendedHierarchyNode extends HierarchyNode<TNode> {
     rectHeight?: number; // Store rectangle height
 }
 
-const cnnArchNode = new TreeNode("CNN Architecture",
-     [
-        new TreeNode("Multiple Layers"),
-        new TreeNode("Input Layer"), 
-        new TreeNode("Convolutional Layer"),
-        new TreeNode("Pooling Layer"), 
-        new TreeNode("Fully Connected Layers")
-     ]);
-const activationFxnNode = new TreeNode("Activation Function", [
-    new TreeNode("ReLU"),
-    new TreeNode("Sigmoid"),
-    new TreeNode("Tanh")
-]);
-const introductionNode = new TreeNode("Introduction", [cnnArchNode]);
-const rootNode = new TreeNode("Root", [introductionNode, activationFxnNode]);
+// const cnnArchNode = new TreeNode("CNN Architecture",
+//      [
+//         new TreeNode("Multiple Layers"),
+//         new TreeNode("Input Layer"), 
+//         new TreeNode("Convolutional Layer"),
+//         new TreeNode("Pooling Layer"), 
+//         new TreeNode("Fully Connected Layers")
+//      ]);
+// const activationFxnNode = new TreeNode("Activation Function", [
+//     new TreeNode("ReLU"),
+//     new TreeNode("Sigmoid"),
+//     new TreeNode("Tanh")
+// ]);
+// const introductionNode = new TreeNode("Introduction", [cnnArchNode]);
+// const rootNode = new TreeNode("Root", [introductionNode, activationFxnNode]);
 
 // Tree data
-const treeData: TNode = rootNode.toJSON();
+async function getTreeData() {
+    const treeData = await fetchJSONData('/api/mindmaps/1/');
+    console.log("Fetched tree data:", treeData);
+    return treeData.data;
+}
 
 // Set dimensions and margins
 const margin = { top: 20, right: 120, bottom: 20, left: 120 };
@@ -56,7 +61,7 @@ const myTree = tree<TNode>().size([height, width]);
 let treeManager: D3TreeManager;
 
 // Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Append SVG to container
     const svg = select("#tree-container")
         .append("svg")
@@ -66,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // Convert data to hierarchy
-    root = hierarchy(treeData, d => d.children) as ExtendedHierarchyNode;
+    root = hierarchy(await getTreeData(), d => d.children) as ExtendedHierarchyNode;
     root.x0 = height / 2;
     root.y0 = 0;
 
@@ -478,7 +483,7 @@ function findNodeInTree(nodeName: string): ExtendedHierarchyNode | null {
 
 // Export functions for external use
 
-export {treeManager}; 
+export {treeManager, getFullTree}; 
 window['getFullTree'] = getFullTree;
 window['addNodeToTree'] = addNodeToTree;
 window['deleteNodeFromTree'] = deleteNodeFromTree; 

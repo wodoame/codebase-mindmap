@@ -1,7 +1,10 @@
-import { ExtendedHierarchyNode } from "./tree-test";
+import { ExtendedHierarchyNode, getFullTree } from "./tree-test";
 import { getEditor } from "./editor";
 import { treeManager } from "./tree-test";
 import { componentManager } from "./managers";
+import { ToastManager } from "./toast";
+import { fetchJSONData } from "./utils";
+
 
 type ModalInstance = {
     toggleSideEffects: (force:boolean)=>void;
@@ -104,9 +107,14 @@ class EditorModal extends BaseModal{
         this.modal.open();
     }
 
-    save(){
+    async save(){
         if(this.activeNode){
             this.activeNode.data.HTML = getEditor()?.getHTML();
+            const response = await fetchJSONData(`/api/mindmaps/1/`, {
+                method: 'PATCH',
+                data: { data : getFullTree()}
+            });
+            console.log(response);
         }
     }
     
@@ -120,6 +128,7 @@ class EditorModal extends BaseModal{
                 const values = window.htmx.values(form);
                 console.log(values.node_name);
                 treeManager.addNode(this.activeNode, values.node_name);
+                ToastManager.success('Node created successfully');
                 componentManager.getInstance('fe-add-node')?.close();
                 form.reset();
             }

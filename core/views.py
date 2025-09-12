@@ -11,3 +11,8 @@ class Sandbox(View):
     def get(self, request):
         context = {}
         return render(request, 'core/pages/sandbox/test.html', context)
+
+class MindMapEditor(View):
+    def get(self, request):
+        context = {}
+        return render(request, 'core/pages/base.html', context)

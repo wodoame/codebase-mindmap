@@ -1,6 +1,6 @@
 {# isOpen is provided by the parent (modal) #} 
  <div
-   @editor-update="getEditorModal().save()"
+   @editor-update.debounce.750ms="getEditorModal().save()"
    x-data="editor('<p>Hello world! :-)</p>')"
    x-init="$watch('isOpen', value => value? focus() : null)"
    >
@@ -24,7 +24,7 @@
           </button>
           {% component 'select'
            id='code-block-language'
-           options=["Plain", "JavaScript", "TypeScript", "Python"] 
+           options=["Plain", "JavaScript", "TypeScript", "Python", "HTML"] 
            onChange="(e)=>setCodeBlock(e.detail.value)"
            / %}
           <!-- <select @change="setCodeBlock($event.target.value)" x-show="isActive('codeBlock', updatedAt)">

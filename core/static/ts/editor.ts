@@ -77,7 +77,7 @@ document.addEventListener('alpine:init', () => {
 
     return {
       updatedAt: Date.now(), // force Alpine to rerender on selection change
-      state: 'edit',
+      state: 'preview',
       previewContent: '',
       init() {
         const _this = this
@@ -111,6 +111,7 @@ document.addEventListener('alpine:init', () => {
         })
         getEditor = () => this;
         window['getEditor'] = getEditor; 
+        if (this.state === 'preview') this.switchToPreview();
       },
       isLoaded() {
         return editor !== undefined;
