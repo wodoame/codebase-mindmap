@@ -117,7 +117,7 @@ class EditorModal extends BaseModal{
         if(this.activeNode){
             const form = document.getElementById('add-node-form') as HTMLFormElement;
             if(form.checkValidity()){
-                const values = window['htmx'].values(form);
+                const values = window.htmx.values(form);
                 console.log(values.node_name);
                 treeManager.addNode(this.activeNode, values.node_name);
                 componentManager.getInstance('fe-add-node')?.close();
@@ -131,5 +131,15 @@ class EditorModal extends BaseModal{
 }
 
 const getEditorModal = () => EditorModal.getInstance();
-window['getEditorModal'] = getEditorModal;
+
+declare global {
+    interface Window {
+        getEditorModal: () => EditorModal;
+        htmx: {
+            values: (form: HTMLFormElement) => any;
+        };
+    }
+}
+
+window.getEditorModal = getEditorModal;
 export { modalManager, getEditorModal };
