@@ -8,7 +8,7 @@ function createModalInstance(id: string){
         isOpen: false,
         init(){
             console.log(`Modal component with id ${id} initialized`);
-            modalManager.createModal(id, this);
+            modalManager.registerModal(id, this);
         },
         // functionalities defined here can be used in the components directly
         open(){
