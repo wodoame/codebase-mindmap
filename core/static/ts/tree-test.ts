@@ -1,4 +1,4 @@
-import { select, tree, hierarchy, HierarchyNode } from "d3";
+import { select, tree, hierarchy, HierarchyNode, zoom, ZoomBehavior, zoomTransform } from "d3";
 import { TreeNode, Tree} from "./tree-datastructure";
 import { getEditorModal} from "./modals";
 import { D3TreeManager } from "./d3-tree-manager";
@@ -69,13 +69,31 @@ let treeManager: D3TreeManager;
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', async () => {
-    // Append SVG to container
-    const svg = select("#tree-container")
+    // Append SVG and add a top-level group for zooming
+    const outerWidth = width + margin.right + margin.left;
+    const outerHeight = height + margin.top + margin.bottom;
+    const outerSvg = select("#tree-container")
         .append("svg")
-        .attr("width", width + margin.right + margin.left)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+        .attr("width", "100%")
+        .attr("height", outerHeight)
+        .attr("viewBox", `0 0 ${outerWidth} ${outerHeight}`)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .attr("class", "mindmap-svg")
+        .style("cursor", "grab");
+
+    const svg = outerSvg.append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // Setup zoom behavior
+    const zoomBehavior: ZoomBehavior<SVGSVGElement, unknown> = zoom<SVGSVGElement, unknown>()
+        .scaleExtent([0.3, 2.5])
+        .on('zoom', (event) => {
+            svg.attr('transform', event.transform.toString());
+        });
+
+    outerSvg.call(zoomBehavior)
+        .on('mousedown.zoom', () => outerSvg.style('cursor', 'grabbing'))
+        .on('mouseup.zoom', () => outerSvg.style('cursor', 'grab'));
 
     // Convert data to hierarchy
     root = hierarchy(await getTreeData(), d => d.children) as ExtendedHierarchyNode;
@@ -386,6 +404,38 @@ document.addEventListener('DOMContentLoaded', async () => {
             d.x0 = d.x!;
             d.y0 = d.y!;
         });
+
+        // Auto-fit (basic) on first render only
+        if (source === root && !root['__fitted']) {
+            root['__fitted'] = true;
+            fitToView();
+            window.addEventListener('resize', debounce(() => fitToView(), 250));
+        }
+
+        function fitToView() {
+            const allY = nodes.map(n => n.y! + (n.rectWidth || 0));
+            const minY = Math.min(...nodes.map(n => n.y!));
+            const maxY = Math.max(...allY);
+            const allX = nodes.map(n => n.x!);
+            const minX = Math.min(...allX);
+            const maxX = Math.max(...allX);
+            const contentWidth = maxY - minY + 100; // padding
+            const contentHeight = maxX - minX + 100;
+            const viewW = outerWidth;
+            const viewH = outerHeight;
+            const scale = Math.min(viewW / contentWidth, viewH / contentHeight, 1.2);
+            const tx = (viewW - contentWidth * scale) / 2 - minY * scale + margin.left;
+            const ty = (viewH - contentHeight * scale) / 2 - minX * scale + margin.top;
+            outerSvg.transition().duration(600).call(zoomBehavior.transform, (zoomTransform(outerSvg.node() as any).constructor as any).identity.translate(tx, ty).scale(scale));
+        }
+
+        function debounce(fn: () => void, wait: number) {
+            let t: number | undefined;
+            return function(this: any) {
+                if (t) window.clearTimeout(t);
+                t = window.setTimeout(() => fn.apply(this), wait);
+            } as any;
+        }
     }
 
     // Helper function to get node bounds
