@@ -76,4 +76,16 @@ async function fetchJSONData(url: string, options: FetchOptions = {}){
       }
 }
 
-export { getDropdown, fetchJSONData };
+
+let currentNodeId = 0;
+
+function nextNodeId(): string {
+  currentNodeId += 1;
+  return `n${currentNodeId}`;
+}
+
+function resetNodeIdCounter(value: number = 0) {
+  currentNodeId = value;
+}
+
+export { getDropdown, fetchJSONData, nextNodeId, resetNodeIdCounter };

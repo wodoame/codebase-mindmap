@@ -1,5 +1,7 @@
 import { hierarchy } from "d3";
 import { ExtendedHierarchyNode, TNode } from "./tree-test";
+import { nextNodeId } from "./utils";
+
 /**
  * D3TreeManager - Manages operations on D3 tree structures
  * Provides methods to add and delete nodes while maintaining tree integrity

@@ -1,14 +1,16 @@
-import { select, tree, hierarchy, HierarchyNode, zoom, ZoomBehavior, zoomTransform } from "d3";
+import { select, tree, hierarchy, HierarchyNode, zoom, ZoomBehavior, zoomTransform, zoomIdentity } from "d3";
 import { TreeNode, Tree} from "./tree-datastructure";
 import { getEditorModal} from "./modals";
 import { D3TreeManager } from "./d3-tree-manager";
 import { fetchJSONData } from "./utils";
+import { nextNodeId } from "./utils";
 
 // Define interfaces
 export interface TNode {
     name: string;
     HTML?: string;
     children?: TNode[];
+    id?: string; // assigned client-side until backend provides stable ids
 }
 
 // Extend HierarchyNode to include the properties D3 tree needs
@@ -39,9 +41,19 @@ export interface ExtendedHierarchyNode extends HierarchyNode<TNode> {
 
 // Tree data
 async function getTreeData() {
-    const treeData = await fetchJSONData('/api/mindmaps/1/');
-    console.log("Fetched tree data:", treeData);
-    return treeData.data;
+    const data = await fetchJSONData('/api/mindmaps/1/');
+    const treeData = data.data as TNode;
+
+    // Recursively assign ids where missing
+    const assignIds = (node: TNode) => {
+        if (!node.id) node.id = nextNodeId();
+        if (node.children && node.children.length) {
+            node.children.forEach(assignIds);
+        }
+    };
+    assignIds(treeData);
+    console.log(treeData);
+    return treeData;
 }
 
 // Set dimensions and margins
@@ -224,10 +236,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Nodes
         const node = svg.selectAll<SVGGElement, ExtendedHierarchyNode>('g.node')
             .data(nodes, (d: ExtendedHierarchyNode) => {
-                if (!d.id) {
-                    d.id = `node-${++i}`;  // Use string ID
+                // Prefer stable data id; fallback to internally generated one
+                if (!d.data.id) {
+                    // maintain backward compatibility with existing d.id counter
+                    if (!d.id) d.id = `node-${++i}`;
+                    return d.id;
                 }
-                return d.id;
+                return d.data.id;
             });
 
         // Enter new nodes
@@ -345,10 +360,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => {
             const link = svg.selectAll<SVGPathElement, ExtendedHierarchyNode>('path.link')
                 .data(links, (d: ExtendedHierarchyNode) => {
-                    if (!d.id) {
-                        d.id = `node-${++i}`;
-                    }
-                    return d.id;
+                    if (d.data.id) return d.data.id + '-link';
+                    if (!d.id) d.id = `node-${++i}`;
+                    return d.id + '-link';
                 });
 
             const linkEnter = link.enter().insert('path', "g")
@@ -426,7 +440,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const scale = Math.min(viewW / contentWidth, viewH / contentHeight, 1.2);
             const tx = (viewW - contentWidth * scale) / 2 - minY * scale + margin.left;
             const ty = (viewH - contentHeight * scale) / 2 - minX * scale + margin.top;
-            outerSvg.transition().duration(600).call(zoomBehavior.transform, (zoomTransform(outerSvg.node() as any).constructor as any).identity.translate(tx, ty).scale(scale));
+            outerSvg
+                .transition()
+                .duration(600)
+                .call(zoomBehavior.transform, zoomIdentity.translate(tx, ty).scale(scale));
         }
 
         function debounce(fn: () => void, wait: number) {

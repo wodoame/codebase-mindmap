@@ -8,12 +8,13 @@ export class TreeNode {
     public children: TreeNode[];
     public parent: TreeNode | null;
     public HTML: string;
-
-    constructor(name: string, children: TreeNode[] = [], HTML: string = '') {
+    public id?: string; // optional stable identifier
+    constructor(name: string, children: TreeNode[] = [], HTML: string = '', id?: string) {
         this.name = name;
         this.children = children;
         this.parent = null;
         this.HTML = HTML;
+        this.id = id;
 
         // Set parent reference for all children
         this.children.forEach(child => {
@@ -78,6 +79,7 @@ export class TreeNode {
             name: this.name,
             HTML: this.HTML
         };
+        if (this.id) result.id = this.id;
 
         if (this.children.length > 0) {
             result.children = this.children.map(child => child.toJSON());
@@ -103,14 +105,12 @@ export class Tree {
     static parse(jsonData: any): Tree {
         const createNode = (nodeData: any): TreeNode => {
             const children: TreeNode[] = [];
-            
             if (nodeData.children && Array.isArray(nodeData.children)) {
                 nodeData.children.forEach((childData: any) => {
                     children.push(createNode(childData));
                 });
             }
-            
-            return new TreeNode(nodeData.name, children);
+            return new TreeNode(nodeData.name, children, nodeData.HTML || '', nodeData.id);
         };
 
         const rootNode = createNode(jsonData);
@@ -121,25 +121,19 @@ export class Tree {
     static fromD3Node(d3Node: ExtendedHierarchyNode): Tree {
         const createNode = (nodeData: ExtendedHierarchyNode): TreeNode => {
             const children: TreeNode[] = [];
-            
-            // Check both children and _children properties
             const nodeChildren = nodeData.children || nodeData._children;
-            
             if (nodeChildren && Array.isArray(nodeChildren)) {
                 nodeChildren.forEach((childData: ExtendedHierarchyNode) => {
                     children.push(createNode(childData));
                 });
             }
-            
-            // Extract HTML from data property, fallback to empty string
             const html = nodeData.data.HTML || '';
-            
-            return new TreeNode(nodeData.data.name, children, html);
+            const id = (nodeData.data as any).id; // pass through if present
+            return new TreeNode(nodeData.data.name, children, html, id);
         };
-
-    const rootNode = createNode(d3Node);
-    return new Tree(rootNode);
-}
+        const rootNode = createNode(d3Node);
+        return new Tree(rootNode);
+    }
 
     /**
      * Convert the entire tree to JSON format
