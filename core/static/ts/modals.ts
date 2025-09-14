@@ -1,4 +1,4 @@
-import { ExtendedHierarchyNode, getFullTree } from "./tree-test";
+import { deleteNodeById, ExtendedHierarchyNode, getFullTree } from "./tree-test";
 import { getEditor } from "./editor";
 import { treeManager } from "./tree-test";
 import { componentManager } from "./managers";
@@ -134,6 +134,19 @@ class EditorModal extends BaseModal{
             }
             else{
                 form.reportValidity();
+            }
+        }
+    }
+
+    deleteNode(){
+        if(this.activeNode){
+            if(this.activeNode.data.id){
+                deleteNodeById(this.activeNode.data.id);
+                ToastManager.success('Node deleted successfully');
+                this.close();
+            }
+            else{
+                ToastManager.error('This node has no id');
             }
         }
     }
