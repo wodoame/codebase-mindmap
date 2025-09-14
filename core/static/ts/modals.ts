@@ -141,8 +141,13 @@ class EditorModal extends BaseModal{
     deleteNode(){
         if(this.activeNode){
             if(this.activeNode.data.id){
-                deleteNodeById(this.activeNode.data.id);
-                ToastManager.success('Node deleted successfully');
+                const isDeleted = deleteNodeById(this.activeNode.data.id);
+                if(isDeleted){
+                    ToastManager.success('Node deleted successfully');
+                }
+                else{
+                    ToastManager.error('Failed to delete node');
+                }
                 this.close();
             }
             else{

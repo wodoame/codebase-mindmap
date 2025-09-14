@@ -1,9 +1,9 @@
-import { select, tree, hierarchy, HierarchyNode, zoom, ZoomBehavior, zoomTransform, zoomIdentity } from "d3";
-import { TreeNode, Tree} from "./tree-datastructure";
+import { select, tree, hierarchy, HierarchyNode, zoom, ZoomBehavior, zoomIdentity } from "d3";
+import { Tree } from "./tree-datastructure";
 import { getEditorModal} from "./modals";
 import { D3TreeManager } from "./d3-tree-manager";
 import { fetchJSONData } from "./utils";
-import { nextNodeId } from "./utils";
+import { generateId } from "./utils";
 
 // Define interfaces
 export interface TNode {
@@ -46,7 +46,7 @@ async function getTreeData() {
 
     // Recursively assign ids where missing
     const assignIds = (node: TNode) => {
-        if (!node.id) node.id = nextNodeId();
+        if (!node.id) node.id = generateId();
         if (node.children && node.children.length) {
             node.children.forEach(assignIds);
         }
@@ -532,7 +532,7 @@ function deleteNodeFromTree(nodeName: string): boolean {
 function deleteNodeById(nodeId: string): boolean {
     if (!treeManager) return false;
     const nodeToDelete = treeManager.findNodeById(root, nodeId as string);
-    if (nodeToDelete && nodeToDelete !== root) {
+    if (nodeToDelete) {
         return treeManager.deleteNode(nodeToDelete);
     }
     return false;

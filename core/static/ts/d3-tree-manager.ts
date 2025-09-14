@@ -1,6 +1,5 @@
-import { hierarchy } from "d3";
 import { ExtendedHierarchyNode, TNode } from "./tree-test";
-import { nextNodeId } from "./utils";
+import { generateId } from "./utils";
 
 /**
  * D3TreeManager - Manages operations on D3 tree structures
@@ -21,25 +20,17 @@ export class D3TreeManager {
      * @returns The newly created node
      */
     addNode(parent: ExtendedHierarchyNode, nodeName: string, nodeHTML: string = ''): ExtendedHierarchyNode {
-        // Create new node data
-        const newNodeData: TNode = {
-            name: nodeName,
-            HTML: nodeHTML,
-            children: []
-        };
+        const newId = generateId();
+        const newNodeData: TNode = { id: newId, name: nodeName, HTML: nodeHTML, children: [] };
 
-        // Add to parent's data structure
-        if (!parent.data.children) {
-            parent.data.children = [];
-        }
+        if (!parent.data.children) parent.data.children = [];
         parent.data.children.push(newNodeData);
 
-        // Let the update function regenerate the entire hierarchy and layout
-        if (this.updateCallback) {
-            this.updateCallback(parent);
-        }
+        if (this.updateCallback) this.updateCallback(parent);
 
-        // Find the newly added node after the update
+        // Prefer lookup by id (names may not be unique)
+        const byId = this.findNodeById(parent, newId);
+        if (byId) return byId;
         return this.findNodeByName(parent, nodeName) || parent;
     }
 

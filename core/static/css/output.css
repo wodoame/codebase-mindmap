@@ -249,9 +249,6 @@
   .inset-0 {
     inset: calc(var(--spacing) * 0);
   }
-  .end-2\.5 {
-    inset-inline-end: calc(var(--spacing) * 2.5);
-  }
   .top-0 {
     top: calc(var(--spacing) * 0);
   }
@@ -263,9 +260,6 @@
   }
   .bottom-0 {
     bottom: calc(var(--spacing) * 0);
-  }
-  .bottom-2\.5 {
-    bottom: calc(var(--spacing) * 2.5);
   }
   .bottom-\[60px\] {
     bottom: 60px;

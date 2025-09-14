@@ -75,17 +75,11 @@ async function fetchJSONData(url: string, options: FetchOptions = {}){
          throw e; // Re-throw to allow caller to handle the error
       }
 }
-
-
-let currentNodeId = 0;
-
-function nextNodeId(): string {
-  currentNodeId += 1;
-  return `n${currentNodeId}`;
+// Simplified stateless unique id generator.
+// Format: n-<epochMs>. NOTE: Calls within the same millisecond will duplicate.
+function generateId(): string {
+  return `n-${Date.now()}`;
 }
 
-function resetNodeIdCounter(value: number = 0) {
-  currentNodeId = value;
-}
 
-export { getDropdown, fetchJSONData, nextNodeId, resetNodeIdCounter };
+export { getDropdown, fetchJSONData, generateId };
