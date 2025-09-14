@@ -520,8 +520,18 @@ function addNodeToTree(parentName: string, nodeName: string, nodeHTML: string = 
 
 function deleteNodeFromTree(nodeName: string): boolean {
     if (!treeManager) return false;
-    
     const nodeToDelete = treeManager.findNodeByName(root, nodeName);
+    if (!nodeToDelete || nodeToDelete === root) return false;
+    // Prefer id path if available
+    if ((nodeToDelete.data as any).id) {
+        return deleteNodeById((nodeToDelete.data as any).id);
+    }
+    return treeManager.deleteNode(nodeToDelete);
+}
+
+function deleteNodeById(nodeId: string): boolean {
+    if (!treeManager) return false;
+    const nodeToDelete = treeManager.findNodeById(root, nodeId as string);
     if (nodeToDelete && nodeToDelete !== root) {
         return treeManager.deleteNode(nodeToDelete);
     }
@@ -547,9 +557,10 @@ function findNodeInTree(nodeName: string): ExtendedHierarchyNode | null {
 
 // Export functions for external use
 
-export {treeManager, getFullTree}; 
+export {treeManager, getFullTree, deleteNodeById}; 
 window['getFullTree'] = getFullTree;
 window['addNodeToTree'] = addNodeToTree;
 window['deleteNodeFromTree'] = deleteNodeFromTree; 
+window['deleteNodeById'] = deleteNodeById;
 window['moveNodeInTree'] = moveNodeInTree;
 window['findNodeInTree'] = findNodeInTree;

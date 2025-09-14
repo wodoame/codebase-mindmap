@@ -120,6 +120,23 @@ export class D3TreeManager {
     }
 
     /**
+     * Find a node by its id (searches visible and collapsed children)
+     * @param root - Root node to search from
+     * @param id - Id to locate
+     */
+    findNodeById(root: ExtendedHierarchyNode, id: string): ExtendedHierarchyNode | null {
+        if ((root.data as any).id === id) return root;
+        const children = root.children || root._children;
+        if (children) {
+            for (const child of children) {
+                const found = this.findNodeById(child, id);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get all nodes in the tree (including collapsed ones)
      * @param root - Root node to traverse from
      * @returns Array of all nodes
