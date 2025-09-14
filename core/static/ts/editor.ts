@@ -1,6 +1,9 @@
 import Alpine from 'alpinejs'
 import { Editor } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
+import Link from '@tiptap/extension-link'
+import Underline from '@tiptap/extension-underline'
+import Highlight from '@tiptap/extension-highlight'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { createLowlight } from 'lowlight'
 import hljs from 'highlight.js'
@@ -38,6 +41,14 @@ interface AlpineEditor {
   toggleItalic(): void;
   toggleCodeBlock(): void;
   setCodeBlock(language?: string): void;
+  toggleBulletList(): void;
+  toggleOrderedList(): void;
+  toggleBlockquote(): void;
+  toggleUnderline(): void;
+  toggleStrike(): void;
+  toggleHighlight(): void;
+  setLink(url?: string): void;
+  unsetLink(): void;
   
   // Preview mode methods
   updatePreview(): void;
@@ -86,8 +97,17 @@ document.addEventListener('alpine:init', () => {
           element: this.$refs.element,
           extensions: [
             StarterKit.configure({
-              codeBlock: false, // disable default code block
+              codeBlock: false,
+              // leave lists/blockquote/strike enabled (default true)
             }),
+            Link.configure({
+              openOnClick: true,
+              autolink: true,
+              linkOnPaste: true,
+              HTMLAttributes: { rel: 'noopener noreferrer nofollow', target: '_blank' }
+            }),
+            Underline,
+            Highlight,
             CodeBlockLowlight.configure({
               lowlight,
               HTMLAttributes: {
@@ -133,6 +153,37 @@ document.addEventListener('alpine:init', () => {
       },
       setCodeBlock(language: string = '') {
         editor.chain().focus().setCodeBlock({ language }).run()
+      },
+      toggleBulletList() {
+        editor.chain().focus().toggleBulletList().run()
+      },
+      toggleOrderedList() {
+        editor.chain().focus().toggleOrderedList().run()
+      },
+      toggleBlockquote() {
+        editor.chain().focus().toggleBlockquote().run()
+      },
+      toggleUnderline() {
+        editor.chain().focus().toggleUnderline().run()
+      },
+      toggleStrike() {
+        editor.chain().focus().toggleStrike().run()
+      },
+      toggleHighlight() {
+        editor.chain().focus().toggleHighlight().run()
+      },
+      setLink(url?: string) {
+        if (!url) {
+          url = window.prompt('Enter URL') || '';
+        }
+        if (url.trim() === '') {
+          editor.chain().focus().extendMarkRange('link').unsetLink().run();
+          return;
+        }
+        editor.chain().focus().extendMarkRange('link').setLink({ href: url.trim() }).run();
+      },
+      unsetLink() {
+        editor.chain().focus().unsetLink().run();
       },
       
       // Preview mode methods
