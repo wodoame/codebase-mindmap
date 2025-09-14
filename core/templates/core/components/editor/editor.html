@@ -5,7 +5,7 @@
    x-init="$watch('isOpen', value => value? focus() : null)"
    >
     <template x-if="isLoaded()">
-    <div class="menu flex gap-2 items-center">
+    <div class="menu flex gap-2 items-center sticky top-0 bg-white z-10 p-2 border-b border-gray-200">
           {% component "editPreviewTabs" / %}
           <button
             @click="toggleHeading({ level: 1 })"

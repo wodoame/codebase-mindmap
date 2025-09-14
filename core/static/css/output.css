@@ -244,6 +244,9 @@
   .static {
     position: static;
   }
+  .sticky {
+    position: sticky;
+  }
   .inset-0 {
     inset: calc(var(--spacing) * 0);
   }
@@ -429,9 +432,6 @@
   }
   .w-\[80\%\] {
     width: 80%;
-  }
-  .w-\[80\] {
-    width: 80;
   }
   .w-full {
     width: 100%;
@@ -623,9 +623,6 @@
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
   }
-  .border-amber-400 {
-    border-color: var(--color-amber-400);
-  }
   .border-blue-600 {
     border-color: var(--color-blue-600);
   }
@@ -634,6 +631,9 @@
   }
   .border-gray-100 {
     border-color: var(--color-gray-100);
+  }
+  .border-gray-200 {
+    border-color: var(--color-gray-200);
   }
   .border-gray-300 {
     border-color: var(--color-gray-300);
