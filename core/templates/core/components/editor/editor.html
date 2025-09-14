@@ -2,7 +2,10 @@
  <div
    @editor-update.debounce.750ms="getEditorModal().save()"
    x-data="editor('<p>Hello world! :-)</p>')"
-   x-init="$watch('isOpen', value => value? focus() : null)"
+   x-init="
+   $watch('isOpen', value => value? focus() : null);
+   $watch('state', value => value === 'edit'? focus() : null);
+   "
    >
     <template x-if="isLoaded()">
     <div class="menu flex gap-2 items-center sticky top-0 bg-white z-10 p-2 border-b border-gray-200">
