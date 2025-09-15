@@ -6,9 +6,11 @@
       <!-- heading -->
        <div
         class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-100/5"
-      >
+      > 
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-300">
+          {% slot "title" %}
            Add a node
+          {% endslot %}
         </h3>
         <button
           type="button"
