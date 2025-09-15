@@ -1456,6 +1456,53 @@
     line-height: 2.25rem;
   }
 }
+.tiptap ul, .tiptap ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+.tiptap ul {
+  list-style-type: disc;
+}
+.tiptap ol {
+  list-style-type: decimal;
+}
+.tiptap li {
+  margin: 0.25rem 0;
+}
+.tiptap li > p {
+  margin: 0.25rem 0;
+}
+.tiptap ul ul {
+  list-style-type: circle;
+  margin-top: 0.25rem;
+}
+.tiptap ul ul ul {
+  list-style-type: square;
+}
+.tiptap ol ol {
+  list-style-type: lower-alpha;
+  margin-top: 0.25rem;
+}
+.tiptap ol ol ol {
+  list-style-type: lower-roman;
+}
+.tiptap blockquote {
+  border-left: 4px solid #e5e7eb;
+  background-color: #f9fafb;
+  color: #374151;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0.375rem;
+  font-style: italic;
+}
+.tiptap blockquote p {
+  margin: 0.5rem 0;
+}
+.dark .tiptap blockquote {
+  border-left-color: #374151;
+  background-color: #111827;
+  color: #d1d5db;
+}
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;
