@@ -121,13 +121,32 @@ class EditorModal extends BaseModal{
     openAddChildForm(){
         componentManager.getInstance('fe-add-node')?.open();
     }
+
+    openSetLinkForm(){
+        componentManager.getInstance('fe-set-link')?.open();
+    }
+
+    setLink(url: string){
+        const form = document.getElementById('set-link-form') as HTMLFormElement;
+        if(form.checkValidity()){
+            getEditor()?.setLink(url);
+            componentManager.getInstance('fe-set-link')?.close();
+            ToastManager.success('Link set successfully');
+            form.reset(); 
+        }
+        else{
+            form.reportValidity();
+        }
+
+    }
+
     addChildNode(){
         if(this.activeNode){
             const form = document.getElementById('add-node-form') as HTMLFormElement;
             if(form.checkValidity()){
-                const values = window.htmx.values(form);
-                console.log(values.node_name);
-                treeManager.addNode(this.activeNode, values.node_name);
+                const formData = new FormData(form);
+                const nodeName = String(formData.get('node_name') ?? '').trim();
+                treeManager.addNode(this.activeNode, nodeName);
                 ToastManager.success('Node created successfully');
                 componentManager.getInstance('fe-add-node')?.close();
                 form.reset();
@@ -159,14 +178,5 @@ class EditorModal extends BaseModal{
 
 const getEditorModal = () => EditorModal.getInstance();
 
-declare global {
-    interface Window {
-        getEditorModal: () => EditorModal;
-        htmx: {
-            values: (form: HTMLFormElement) => any;
-        };
-    }
-}
-
-window.getEditorModal = getEditorModal;
+window['getEditorModal'] = getEditorModal;
 export { modalManager, getEditorModal };

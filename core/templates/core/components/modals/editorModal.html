@@ -27,27 +27,60 @@
         <div class="p-4" id="editor-container">
           {% component "editor" / %}
         </div>
+
+        <!-- add node form -->
         {% component "focusedElement" id="fe-add-node" %}
-         <form 
-         class="p-4 bg-white" 
-         @keydown.enter="$event.preventDefault();" 
-         id="add-node-form">   
-               <div class="relative">
-                    <input type="text" @keyup.enter="getEditorModal().addChildNode()" 
-                    x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
-                    name="node_name"
-                    placeholder="Enter node name"
-                    required
-                    class="block w-full border-2 focus:outline-none p-4 font-semibold text-gray-900 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                     />
-                </div>
-                <button 
-                type="button" 
-                @click="getEditorModal().addChildNode()" 
-                class="text-white mt-4 flex justify-center items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-4 py-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                   Add Node
+        <form 
+        class="p-4 bg-white" 
+        @keydown.enter="$event.preventDefault();" 
+        id="add-node-form">   
+        <div class="relative">
+          <input type="text" @keyup.enter="getEditorModal().addChildNode()" 
+          x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
+          name="node_name"
+          placeholder="Enter node name"
+          required
+          class="block w-full border-2 focus:outline-none p-4 font-medium text-gray-900 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
+        <button 
+        type="button" 
+        @click="getEditorModal().addChildNode()" 
+        class="text-white mt-4 flex justify-center items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-4 py-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        Add Node
+      </button>
+    </form>
+    {% endcomponent %}
+    
+    <!-- set link form  -->
+    {% component "focusedElement" id="fe-set-link" %}
+      {% fill "title" %}Set Link{% endfill %}
+      {% fill "default" %}
+      <form 
+      class="p-4 bg-white" 
+          @keydown.enter="$event.preventDefault();" 
+          id="set-link-form">   
+                <div class="relative">
+                      <input
+                      x-ref="urlInput"
+                      type="text" @keyup.enter="getEditorModal().setLink($el.value)" 
+                      x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
+                      name="url"
+                      placeholder="Enter URL"
+                      required
+                      class="block w-full border-2 focus:outline-none p-4 font-medium text-gray-900 border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      />
+                  </div>
+                  <button 
+                  type="button" 
+                  @click="getEditorModal().setLink($refs.urlInput.value)" 
+                  class="text-white mt-4 flex justify-center items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-4 py-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                  Set Link
                 </button>
-            </form>
+              </form>
+          {% endfill %}
         {% endcomponent %}
+
+
       {% endfill %}
 {% endcomponent %}
