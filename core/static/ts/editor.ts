@@ -98,6 +98,9 @@ document.addEventListener('alpine:init', () => {
           extensions: [
             StarterKit.configure({
               codeBlock: false,
+              // Avoid duplicates: we add these explicitly below
+              link: false as any,
+              underline: false as any,
               // leave lists/blockquote/strike enabled (default true)
             }),
             Link.configure({
@@ -172,10 +175,7 @@ document.addEventListener('alpine:init', () => {
       toggleHighlight() {
         editor.chain().focus().toggleHighlight().run()
       },
-      setLink(url?: string) {
-        if (!url) {
-          url = window.prompt('Enter URL') || '';
-        }
+      setLink(url: string) {
         if (url.trim() === '') {
           editor.chain().focus().extendMarkRange('link').unsetLink().run();
           return;
