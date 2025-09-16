@@ -17,11 +17,45 @@ export const LinkPreview = Node.create({
 
   addAttributes() {
     return {
-      href: { default: null },
-      title: { default: null },
-      description: { default: null },
-      image: { default: null },
-      siteName: { default: null },
+      href: {
+        default: null,
+        parseHTML: element =>
+          element.getAttribute('data-href') || element.querySelector('a')?.getAttribute('href') || null,
+      },
+      title: {
+        default: null,
+        parseHTML: element => {
+          const data = element.getAttribute('data-title')
+          if (data) return data
+          const first = element.querySelector('a div div') as HTMLElement | null
+          return first?.textContent?.trim() || null
+        },
+      },
+      description: {
+        default: null,
+        parseHTML: element => {
+          const data = element.getAttribute('data-description')
+          if (data) return data
+          const divs = element.querySelectorAll('a div div')
+          const second = (divs && divs[1]) as HTMLElement | undefined
+          return second?.textContent?.trim() || null
+        },
+      },
+      image: {
+        default: null,
+        parseHTML: element =>
+          element.getAttribute('data-image') || element.querySelector('a img')?.getAttribute('src') || null,
+      },
+      siteName: {
+        default: null,
+        parseHTML: element => {
+          const data = element.getAttribute('data-site-name')
+          if (data) return data
+          const divs = element.querySelectorAll('a div div')
+          const third = (divs && divs[2]) as HTMLElement | undefined
+          return third?.textContent?.trim() || null
+        },
+      },
     }
   },
 
@@ -57,8 +91,19 @@ export const LinkPreview = Node.create({
       site ? ['div', { style: siteStyle }, site] : '',
     ])
 
+    const figureAttrs: any = {
+      'data-type': 'link-preview',
+      contenteditable: 'false',
+      style: cardStyle,
+    }
+    if (attrs.href) figureAttrs['data-href'] = attrs.href
+    if (attrs.title) figureAttrs['data-title'] = attrs.title
+    if (attrs.description) figureAttrs['data-description'] = attrs.description
+    if (attrs.image) figureAttrs['data-image'] = attrs.image
+    if (attrs.siteName) figureAttrs['data-site-name'] = attrs.siteName
+
     return [
-      'figure', { 'data-type': 'link-preview', contenteditable: 'false', style: cardStyle },
+      'figure', figureAttrs,
       ['a', { href, target: '_blank', rel: 'noopener noreferrer nofollow', style: aStyle }, ...children],
     ]
   },
