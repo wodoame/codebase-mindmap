@@ -4,9 +4,11 @@ import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
+import Image from '@tiptap/extension-image'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { createLowlight } from 'lowlight'
 import hljs from 'highlight.js'
+import LinkPreview from './extensions/linkPreview'
 
 // Import languages
 import javascript from 'highlight.js/lib/languages/javascript'
@@ -111,6 +113,10 @@ document.addEventListener('alpine:init', () => {
             }),
             Underline,
             Highlight,
+            Image.configure({
+              allowBase64: false,
+            }),
+            LinkPreview,
             CodeBlockLowlight.configure({
               lowlight,
               HTMLAttributes: {
@@ -119,6 +125,58 @@ document.addEventListener('alpine:init', () => {
             }),
           ],
           content: content,
+          editorProps: {
+            handlePaste: (view, event) => {
+              const text = event.clipboardData?.getData('text/plain')?.trim() || ''
+              if (!text) return false
+
+              // If it's an image url, insert as image
+              if (/\.(png|jpe?g|gif|webp|bmp|svg)(\?.*)?$/i.test(text)) {
+                editor.chain().focus().insertContent({ type: 'image', attrs: { src: text } }).run()
+                return true
+              }
+
+              // If it looks like a URL, try link preview
+              try {
+                const u = new URL(text)
+                // Use backend to resolve OG metadata (and detect images via content-type)
+                fetch(`/api/link-preview/?url=${encodeURIComponent(text)}`)
+                  .then(r => r.json())
+                  .then(data => {
+                    if (data?.type === 'image' && data.image) {
+                      editor.chain().focus().insertContent({ type: 'image', attrs: { src: data.image } }).run()
+                      return
+                    }
+                    if (data?.type === 'link' && (data.image || data.title || data.description)) {
+                      editor.chain().focus().insertContent({
+                        type: 'linkPreview',
+                        attrs: {
+                          href: data.url || text,
+                          title: data.title || null,
+                          description: data.description || null,
+                          image: data.image || null,
+                          siteName: data.siteName || null,
+                        }
+                      }).run()
+                      return
+                    }
+                    // Fallback: just insert as a normal link
+                    editor.chain().focus().insertContent(text).setLink({ href: text }).run()
+                  })
+                  .catch(() => {
+                    // If preview fails, insert link text
+                    editor.chain().focus().insertContent(text).setLink({ href: text }).run()
+                  })
+
+                // Prevent default paste (we will insert async)
+                event.preventDefault()
+                return true
+              } catch {
+                // Not a URL, let default paste proceed
+                return false
+              }
+            }
+          },
           onCreate({ editor }) {
             _this.updatedAt = Date.now()
             _this.updatePreview()
