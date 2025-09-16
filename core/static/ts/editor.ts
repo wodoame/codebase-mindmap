@@ -311,6 +311,21 @@ document.addEventListener('alpine:init', () => {
               }
             }
           })
+
+          // Ensure empty paragraphs render visible blank lines in preview
+          const paragraphs = tempDiv.querySelectorAll('p')
+          paragraphs.forEach(p => {
+            const html = (p as HTMLElement).innerHTML
+            // Strip whitespace, &nbsp;, and <br> to detect truly empty blocks
+            const stripped = html
+              .replace(/&nbsp;/gi, '')
+              .replace(/<br\s*\/>/gi, '')
+              .replace(/<br>/gi, '')
+              .trim()
+            if (!stripped) {
+              (p as HTMLElement).innerHTML = '&nbsp;'
+            }
+          })
           
           this.previewContent = tempDiv.innerHTML
         }
