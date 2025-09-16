@@ -129,6 +129,7 @@ document.addEventListener('alpine:init', () => {
           content: content,
           editorProps: {
             handlePaste: (view, event) => {
+              console.log('paste event fired');
               const text = event.clipboardData?.getData('text/plain')?.trim() || ''
               if (!text) return false
 

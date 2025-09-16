@@ -103,6 +103,7 @@ class EditorModal extends BaseModal{
         this.activeNode = node;
         const dataFields = this.df.getFields();
         dataFields.title.textContent = node.data.name;
+        console.log('Editor content set to:', node.data.HTML || '');
         getEditor()?.setHTML(node.data.HTML || '');
         this.modal.open();
     }
@@ -114,7 +115,6 @@ class EditorModal extends BaseModal{
                 method: 'PATCH',
                 data: { data : getFullTree()}
             });
-            console.log(response);
         }
     }
     
