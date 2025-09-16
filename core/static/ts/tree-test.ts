@@ -91,21 +91,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         .attr("viewBox", `0 0 ${outerWidth} ${outerHeight}`)
         .attr("preserveAspectRatio", "xMidYMid meet")
         .attr("class", "mindmap-svg")
-        .style("cursor", "grab");
+        .style("cursor", "grab")
+        .style("touch-action", "none")
+        .style("user-select", "none");
 
-    const svg = outerSvg.append("g")
+        // Add a transparent background to ensure drags work anywhere
+        const bg = outerSvg.append("rect")
+            .attr("class", "zoom-bg")
+            .attr("width", outerWidth)
+            .attr("height", outerHeight)
+            .attr("fill", "transparent")
+            .style("pointer-events", "all");
+        // Ensure background sits behind content
+        bg.lower();
+
+        const svg = outerSvg.append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // Prevent text selection and native drag during panning
+    outerSvg
+        .on('selectstart', (event: any) => event.preventDefault())
+        .on('dragstart', (event: any) => event.preventDefault());
 
     // Setup zoom behavior
     const zoomBehavior: ZoomBehavior<SVGSVGElement, unknown> = zoom<SVGSVGElement, unknown>()
         .scaleExtent([0.3, 2.5])
+        .extent([[0, 0], [outerWidth, outerHeight]])
+        .translateExtent([[-Infinity, -Infinity], [Infinity, Infinity]])
+        .filter((event: any) => {
+            if (event.ctrlKey || event.metaKey) return false;
+            if (event.type === 'wheel') return true;
+            if (event.type === 'pointerdown' || event.type === 'mousedown' || event.type === 'touchstart') {
+                return event.button === 0 || event.button === undefined;
+            }
+            return false;
+        })
+        .on('start', () => outerSvg.style('cursor', 'grabbing'))
+        .on('end', () => outerSvg.style('cursor', 'grab'))
         .on('zoom', (event) => {
             svg.attr('transform', event.transform.toString());
         });
 
-    outerSvg.call(zoomBehavior)
-        .on('mousedown.zoom', () => outerSvg.style('cursor', 'grabbing'))
-        .on('mouseup.zoom', () => outerSvg.style('cursor', 'grab'));
+    outerSvg.call(zoomBehavior);
 
     // Convert data to hierarchy
     root = hierarchy(await getTreeData(), d => d.children) as ExtendedHierarchyNode;
@@ -261,7 +288,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             .style("fill", d => d._children ? "lightsteelblue" : "#fff")
             .style("stroke", "steelblue")
             .style("stroke-width", 2)
-            .on('click', (event, d)=>getEditorModal().show(d)); // Modal click only on rectangle
+                .on('click', (event, d)=>{
+                    // If the drag/zoom handled this interaction, ignore the click
+                    if ((event as any).defaultPrevented) return;
+                    getEditorModal().show(d);
+                }); // Modal click only on rectangle
 
         nodeEnter.append('text')
             .attr("dy", ".35em")
@@ -270,7 +301,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             .style("fill-opacity", 1e-6)
             .style("font-size", "12px")
             .style("font-family", "sans-serif")
-            .on('click', (event, d)=>getEditorModal().show(d)); // Modal click on text too
+            .style("user-select", "none")
+                .on('click', (event, d)=>{
+                    if ((event as any).defaultPrevented) return;
+                    getEditorModal().show(d);
+                }); // Modal click on text too
 
         // Add expand/collapse indicator circle
         nodeEnter.append('circle')
@@ -285,6 +320,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             .style('cursor', 'pointer')
             .on('click', function(event, d) {
                 event.stopPropagation(); // Prevent modal from opening
+                if ((event as any).defaultPrevented) return; // Ignore if this was a drag/zoom
                 click(event, d); // Call the toggle function
             });
 

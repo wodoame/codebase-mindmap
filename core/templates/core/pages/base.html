@@ -55,6 +55,14 @@
            stroke-width: 2px;
          }
 
+         /* Prevent text selection while panning the mindmap */
+         .mindmap-svg, .mindmap-svg * {
+           -webkit-user-select: none;
+           -moz-user-select: none;
+           -ms-user-select: none;
+           user-select: none;
+         }
+
          /*editor
          
          button.is-active {
