@@ -78,6 +78,20 @@
   @apply p-4 m-2 border-2 rounded-md focus:border-blue-600 focus:outline-0;
 }
 
+/* Preserve user-entered whitespace in preview text while keeping code blocks intact */
+.tiptap,
+.tiptap p,
+.tiptap span,
+.tiptap li,
+.tiptap blockquote {
+  white-space: pre-wrap;
+}
+.tiptap pre,
+.tiptap pre *,
+.tiptap code {
+  white-space: revert;
+}
+
 .tiptap pre code {
       background: transparent;
       color: inherit;

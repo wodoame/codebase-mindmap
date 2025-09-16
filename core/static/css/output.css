@@ -774,6 +774,9 @@
   .text-wrap {
     text-wrap: wrap;
   }
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
+  }
   .text-blue-500 {
     color: var(--color-blue-500);
   }
@@ -1403,6 +1406,12 @@
     outline-style: var(--tw-outline-style);
     outline-width: 0px;
   }
+}
+.tiptap, .tiptap p, .tiptap span, .tiptap li, .tiptap blockquote {
+  white-space: pre-wrap;
+}
+.tiptap pre, .tiptap pre *, .tiptap code {
+  white-space: revert;
 }
 .tiptap pre code {
   background: transparent;
