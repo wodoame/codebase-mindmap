@@ -9,6 +9,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { createLowlight } from 'lowlight'
 import hljs from 'highlight.js'
 import LinkPreview from './extensions/linkPreview'
+import YouTube from './extensions/youtube'
 
 // Import languages
 import javascript from 'highlight.js/lib/languages/javascript'
@@ -117,6 +118,7 @@ document.addEventListener('alpine:init', () => {
               allowBase64: false,
             }),
             LinkPreview,
+            YouTube,
             CodeBlockLowlight.configure({
               lowlight,
               HTMLAttributes: {
@@ -136,9 +138,29 @@ document.addEventListener('alpine:init', () => {
                 return true
               }
 
-              // If it looks like a URL, try link preview
+              // If it looks like a URL, handle YouTube first, else try link preview
               try {
                 const u = new URL(text)
+                const host = u.hostname.replace(/^www\./, '')
+                const ytId = (() => {
+                  // youtu.be/<id>
+                  if (host === 'youtu.be') return u.pathname.slice(1)
+                  // youtube.com/watch?v=<id>
+                  if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
+                    const v = u.searchParams.get('v')
+                    if (v) return v
+                    // youtube.com/embed/<id>
+                    const m = u.pathname.match(/\/embed\/([\w-]{6,})/)
+                    if (m) return m[1]
+                  }
+                  return null
+                })()
+
+                if (ytId) {
+                  editor.chain().focus().insertContent({ type: 'youtube', attrs: { videoId: ytId } }).run()
+                  event.preventDefault()
+                  return true
+                }
                 // Use backend to resolve OG metadata (and detect images via content-type)
                 fetch(`/api/link-preview/?url=${encodeURIComponent(text)}`)
                   .then(r => r.json())
