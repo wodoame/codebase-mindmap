@@ -159,10 +159,13 @@ Use this as a blueprint when generating UI for any project. It defines a calm, m
 ## Utility Class Tokens (example mapping)
 
 - Buttons
-  - `.btn`: `inline-flex items-center rounded-md text-sm px-3 py-2`
+  - `.btn`: `inline-flex items-center rounded-md text-sm px-3 py-4`
   - `.btn-primary`: dark solid background, white text, hover slightly darker
   - `.btn-outline`: neutral border, transparent background, hover subtle fill
   - `.btn-xs`: `text-xs px-2.5 py-1.5`
+- Inputs
+  - `.input`: `block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500 focus:outline-none`
+  - `.textarea`: `block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500 focus:outline-none resize-none`
 - Surfaces
   - `.card`: `rounded-lg border p-4 bg-white shadow-sm`
   - `.muted`: subdued text color; `.muted-strong`: slightly stronger
