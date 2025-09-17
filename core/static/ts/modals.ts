@@ -84,6 +84,7 @@ class EditorModal extends BaseModal{
     private static instance: EditorModal;
     private df: DataFields;
     private activeNode: ExtendedHierarchyNode | null = null;
+    private pendingDeleteNode: ExtendedHierarchyNode | null = null;
 
     private constructor(id:string, df: DataFields){
         super(id);
@@ -158,21 +159,57 @@ class EditorModal extends BaseModal{
     }
 
     deleteNode(){
+        // Backward-compat: immediate delete (kept if called directly)
         if(this.activeNode){
             if(this.activeNode.data.id){
                 const isDeleted = deleteNodeById(this.activeNode.data.id);
                 if(isDeleted){
                     ToastManager.success('Node deleted successfully');
-                }
-                else{
+                } else {
                     ToastManager.error('Failed to delete node');
                 }
                 this.close();
-            }
-            else{
+            } else {
                 ToastManager.error('This node has no id');
             }
         }
+    }
+
+    // Confirm delete flow
+    openConfirmDelete(){
+        if(!this.activeNode){
+            ToastManager.error('No active node selected');
+            return;
+        }
+        this.pendingDeleteNode = this.activeNode;
+        componentManager.getInstance('fe-confirm-delete')?.open();
+    }
+
+    cancelConfirmDelete(){
+        this.pendingDeleteNode = null;
+        componentManager.getInstance('fe-confirm-delete')?.close();
+    }
+
+    confirmDelete(){
+        const node = this.pendingDeleteNode;
+        if(!node){
+            ToastManager.error('Nothing to delete');
+            return;
+        }
+        if(!node.data.id){
+            ToastManager.error('This node has no id');
+            return;
+        }
+
+        const isDeleted = deleteNodeById(node.data.id);
+        if(isDeleted){
+            ToastManager.success('Node deleted successfully');
+        } else {
+            ToastManager.error('Failed to delete node');
+        }
+        this.pendingDeleteNode = null;
+        componentManager.getInstance('fe-confirm-delete')?.close();
+        this.close();
     }
 }
 
