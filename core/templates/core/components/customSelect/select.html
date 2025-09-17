@@ -2,7 +2,7 @@
 {# properties like isActive are provided by the parent (editor) #}
 <div 
 x-data="select('{{id}}')"
-x-show="isActive('codeBlock', updatedAt)"
+x-show="isActive('codeBlock', updatedAt) && isEditMode()"
 x-ref="wrapper"
  {% if options %}
    data-options='{{options|json_string}}'

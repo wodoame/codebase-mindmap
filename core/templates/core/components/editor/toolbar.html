@@ -1,4 +1,4 @@
-<div class="flex items-center gap-1" role="toolbar" aria-label="Editor toolbar">
+<div x-show="isEditMode()" class="flex items-center gap-1" role="toolbar" aria-label="Editor toolbar">
 	<!-- Text styles -->
 	<div class="flex items-center gap-1" role="group" aria-label="Text styles">
 		<button class="toolbar-btn" @click="toggleBold()" :class="{ 'toolbar-btn-active' : isActive('bold', updatedAt) }" title="Bold">

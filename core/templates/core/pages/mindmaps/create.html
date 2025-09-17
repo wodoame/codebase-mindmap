@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Mind Map</title>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <link rel="stylesheet" href="{% static 'css/github-dark.css' %}">
+  <script type="module" crossorigin src="{% static 'js/vite/bundle.js' %}"></script>
+  <style>
+    body { margin: 2rem; font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body class="bg-white text-slate-900">
+  <main class="max-w-2xl mx-auto">
+    <header class="mb-6">
+      <h1 class="text-2xl font-semibold">New Mind Map</h1>
+      <p class="text-slate-600">Create a minimal record with title and description.</p>
+    </header>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="block text-sm font-medium mb-1" for="id_title">Title</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+        <p class="text-sm text-red-600 mt-1">{{ form.title.errors|striptags }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1" for="id_description">Description</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+        <p class="text-sm text-red-600 mt-1">{{ form.description.errors|striptags }}</p>
+        {% endif %}
+      </div>
+
+      <div class="pt-2 flex items-center gap-2">
+        <button type="submit" class="inline-flex items-center rounded-md bg-slate-900 text-white text-sm px-3 py-2 hover:bg-slate-800">Create</button>
+        <a href="{% url 'editor' %}" class="inline-flex items-center rounded-md border text-sm px-3 py-2 hover:bg-slate-50">Cancel</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
