@@ -23,27 +23,18 @@ export interface ExtendedHierarchyNode extends HierarchyNode<TNode> {
     rectHeight?: number; // Store rectangle height
 }
 
-// const cnnArchNode = new TreeNode("CNN Architecture",
-//      [
-//         new TreeNode("Multiple Layers"),
-//         new TreeNode("Input Layer"), 
-//         new TreeNode("Convolutional Layer"),
-//         new TreeNode("Pooling Layer"), 
-//         new TreeNode("Fully Connected Layers")
-//      ]);
-// const activationFxnNode = new TreeNode("Activation Function", [
-//     new TreeNode("ReLU"),
-//     new TreeNode("Sigmoid"),
-//     new TreeNode("Tanh")
-// ]);
-// const introductionNode = new TreeNode("Introduction", [cnnArchNode]);
-// const rootNode = new TreeNode("Root", [introductionNode, activationFxnNode]);
+export function getMindMapId(): string | null {
+    const meta = document.querySelector('meta[name="mindmap-id"]');
+    return meta ? meta.getAttribute('content') : null;
+}
 
 // Tree data
-async function getTreeData() {
+export async function getTreeData() {
     // Get mindmap id from meta tag
-    const meta = document.querySelector('meta[name="mindmap-id"]')!;
-    const mindmapId = meta.getAttribute('content');
+    const mindmapId = getMindMapId();
+    if(mindmapId === null) {
+        throw new Error("Mindmap ID not found in meta tag");
+    }
     const data = await fetchJSONData(`/api/mindmaps/${mindmapId}/`);
     const treeData = data.data as TNode;
 
@@ -537,16 +528,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-function convertD3TreeToTreeStructure(d3Root: ExtendedHierarchyNode): Tree {
+
+export function convertD3TreeToTreeStructure(d3Root: ExtendedHierarchyNode): Tree {
     return Tree.fromD3Node(d3Root);
 }
 
-function getFullTree(): Tree {
+export function getFullTree(): Tree {
     return convertD3TreeToTreeStructure(root);
 }
 
 // Tree manipulation functions
-function addNodeToTree(parentName: string, nodeName: string, nodeHTML: string = ''): boolean {
+export function addNodeToTree(parentName: string, nodeName: string, nodeHTML: string = ''): boolean {
     if (!treeManager) return false;
     
     const parentNode = treeManager.findNodeByName(root, parentName);
@@ -557,7 +549,7 @@ function addNodeToTree(parentName: string, nodeName: string, nodeHTML: string = 
     return false;
 }
 
-function deleteNodeFromTree(nodeName: string): boolean {
+export function deleteNodeFromTree(nodeName: string): boolean {
     if (!treeManager) return false;
     const nodeToDelete = treeManager.findNodeByName(root, nodeName);
     if (!nodeToDelete || nodeToDelete === root) return false;
@@ -568,7 +560,7 @@ function deleteNodeFromTree(nodeName: string): boolean {
     return treeManager.deleteNode(nodeToDelete);
 }
 
-function deleteNodeById(nodeId: string): boolean {
+export function deleteNodeById(nodeId: string): boolean {
     if (!treeManager) return false;
     const nodeToDelete = treeManager.findNodeById(root, nodeId as string);
     if (nodeToDelete) {
@@ -577,7 +569,7 @@ function deleteNodeById(nodeId: string): boolean {
     return false;
 }
 
-function moveNodeInTree(nodeToMoveName: string, newParentName: string): boolean {
+export function moveNodeInTree(nodeToMoveName: string, newParentName: string): boolean {
     if (!treeManager) return false;
     
     const nodeToMove = treeManager.findNodeByName(root, nodeToMoveName);
@@ -589,17 +581,16 @@ function moveNodeInTree(nodeToMoveName: string, newParentName: string): boolean 
     return false;
 }
 
-function findNodeInTree(nodeName: string): ExtendedHierarchyNode | null {
+export function findNodeInTree(nodeName: string): ExtendedHierarchyNode | null {
     if (!treeManager) return null;
     return treeManager.findNodeByName(root, nodeName);
 }
 
+export { treeManager };
 // Export functions for external use
-
-export {treeManager, getFullTree, deleteNodeById}; 
 window['getFullTree'] = getFullTree;
 window['addNodeToTree'] = addNodeToTree;
-window['deleteNodeFromTree'] = deleteNodeFromTree; 
+window['deleteNodeFromTree'] = deleteNodeFromTree;
 window['deleteNodeById'] = deleteNodeById;
 window['moveNodeInTree'] = moveNodeInTree;
 window['findNodeInTree'] = findNodeInTree;
