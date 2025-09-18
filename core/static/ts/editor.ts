@@ -5,6 +5,8 @@ import Link from '@tiptap/extension-link'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
 import Image from '@tiptap/extension-image'
+import TaskList from '@tiptap/extension-task-list'
+import TaskItem from '@tiptap/extension-task-item'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { createLowlight } from 'lowlight'
 import hljs from 'highlight.js'
@@ -46,6 +48,7 @@ interface AlpineEditor {
   setCodeBlock(language?: string): void;
   toggleBulletList(): void;
   toggleOrderedList(): void;
+  toggleTaskList(): void;
   toggleBlockquote(): void;
   toggleUnderline(): void;
   toggleStrike(): void;
@@ -106,6 +109,9 @@ document.addEventListener('alpine:init', () => {
               underline: false as any,
               // leave lists/blockquote/strike enabled (default true)
             }),
+            // Task list support
+            TaskList,
+            TaskItem,
             Link.configure({
               openOnClick: true,
               autolink: true,
@@ -243,6 +249,9 @@ document.addEventListener('alpine:init', () => {
       },
       toggleOrderedList() {
         editor.chain().focus().toggleOrderedList().run()
+      },
+      toggleTaskList() {
+        editor.chain().focus().toggleTaskList().run()
       },
       toggleBlockquote() {
         editor.chain().focus().toggleBlockquote().run()

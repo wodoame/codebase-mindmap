@@ -28,6 +28,9 @@
 		<button class="toolbar-btn" @click="toggleOrderedList()" :class="{ 'toolbar-btn-active' : isActive('orderedList', updatedAt) }" title="Ordered List">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-ordered-icon lucide-list-ordered"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg>
 		</button>
+		<button class="toolbar-btn" @click="toggleTaskList()" :class="{ 'toolbar-btn-active' : isActive('taskList', updatedAt) }" title="Task List">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-check"><path d="M15 4H9a5 5 0 0 0-5 5v6a5 5 0 0 0 5 5h6a5 5 0 0 0 5-5V9a5 5 0 0 0-5-5Z"/><path d="m9 12 2 2 4-4"/></svg>
+		</button>
 	</div>
 
 	<div class="w-px h-6 bg-gray-200 mx-2 dark:bg-gray-700"></div>

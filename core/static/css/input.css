@@ -193,6 +193,32 @@
   list-style-type: lower-roman;
 }
 
+/* tiptap task lists */
+.tiptap ul[data-type='taskList'] {
+  list-style: none; /* remove bullets for task lists */
+  padding-left: 0; /* reset padding so checkbox aligns nicely */
+  margin: 0.75rem 0; /* keep consistent vertical spacing */
+}
+.tiptap ul[data-type='taskList'] li {
+  list-style: none; /* ensure no bullet markers on individual items */
+  display: flex; /* place checkbox and text on the same line */
+  align-items: flex-start;
+  gap: 0.5rem; /* spacing between checkbox and text */
+  margin: 0.25rem 0; /* consistent item spacing */
+}
+.tiptap ul[data-type='taskList'] li > label {
+  flex: 0 0 auto;
+  /* nudge checkbox to align with first text line */
+  margin-top: 2px;
+}
+.tiptap ul[data-type='taskList'] li > div.content {
+  flex: 1 1 auto; /* allow text to wrap nicely */
+}
+/* nested task lists keep indentation */
+.tiptap ul[data-type='taskList'] ul[data-type='taskList'] {
+  padding-left: 1.5rem;
+}
+
 /* tiptap rich text: blockquotes */
 .tiptap blockquote {
   border-left: 4px solid #e5e7eb; /* gray-200 */
