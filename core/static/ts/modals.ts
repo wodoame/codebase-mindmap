@@ -112,7 +112,7 @@ class EditorModal extends BaseModal{
     async save(){
         if(this.activeNode){
             this.activeNode.data.HTML = getEditor()?.getHTML();
-            const response = await fetchJSONData(`/api/mindmaps/1/`, {
+            const response = await fetchJSONData(`/api/mindmaps/4/`, {
                 method: 'PATCH',
                 data: { data : getFullTree()}
             });

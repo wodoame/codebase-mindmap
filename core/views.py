@@ -16,8 +16,9 @@ class Sandbox(View):
         return render(request, 'core/pages/sandbox.html', context)
 
 class MindMapEditor(View):
-    def get(self, request):
-        context = {}
+    def get(self, request, mindmap_id):
+        context = {"mindmap_id": mindmap_id}
+        # Pass mindmap_id to template for meta tag
         return render(request, 'core/pages/base.html', context)
 
 class CreateMindMap(View):

@@ -2,6 +2,9 @@
 {% load static %}
 <html lang="en">
 <head>
+  {% if mindmap_id %}
+  <meta name="mindmap-id" content="{{ mindmap_id }}">
+  {% endif %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>

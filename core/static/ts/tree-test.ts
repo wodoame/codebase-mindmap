@@ -41,7 +41,10 @@ export interface ExtendedHierarchyNode extends HierarchyNode<TNode> {
 
 // Tree data
 async function getTreeData() {
-    const data = await fetchJSONData('/api/mindmaps/1/');
+    // Get mindmap id from meta tag
+    const meta = document.querySelector('meta[name="mindmap-id"]')!;
+    const mindmapId = meta.getAttribute('content');
+    const data = await fetchJSONData(`/api/mindmaps/${mindmapId}/`);
     const treeData = data.data as TNode;
 
     // Recursively assign ids where missing
