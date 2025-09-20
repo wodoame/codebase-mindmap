@@ -6,7 +6,7 @@ from .forms import MindMapForm
 class Index(View):
     def get(self, request):
         context = {}
-        return render(request, 'core/pages/base.html', context)
+        return redirect('mindmaps')
 
 class Sandbox(View):
     # ? Random testing area
@@ -33,7 +33,7 @@ class CreateMindMap(View):
             return redirect('editor')  # '/test/' route
         return render(request, 'core/pages/mindmaps/create.html', {"form": form})
     
-class MinMaps(View):
+class MindMaps(View):
     def get(self, request):
         mindmaps = MindMap.objects.order_by('-updated_at')
         context = {"mindmaps": mindmaps}

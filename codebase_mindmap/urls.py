@@ -22,7 +22,7 @@ urlpatterns = [
     path('', include("django_components.urls")),
     path('', core_views.Index.as_view(), name='index'),
     path('maps/<int:mindmap_id>/', core_views.MindMapEditor.as_view(), name='editor'),
-    path('maps/', core_views.MinMaps.as_view(), name='mindmaps'),
+    path('maps/', core_views.MindMaps.as_view(), name='mindmaps'),
     path('maps/new/', core_views.CreateMindMap.as_view(), name='mindmap-create'),
     path('api/', include('api.urls')),
 ]
