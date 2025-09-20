@@ -151,6 +151,44 @@ export class D3TreeManager {
     }
 
     /**
+     * Update a node's data with partial values. Any field not provided remains unchanged.
+     * Triggers the update callback to refresh the view.
+     * @param node - The node to update
+     * @param updates - Partial updates for the node's data
+     * @returns The updated node
+     */
+    updateNode(
+        node: ExtendedHierarchyNode,
+        updates: Partial<Pick<TNode, 'name' | 'HTML'>>
+    ): ExtendedHierarchyNode {
+        if (!node) return node;
+
+        if (Object.prototype.hasOwnProperty.call(updates, 'name')) {
+            const name = updates.name as string | undefined;
+            if (typeof name === 'string' && name.trim().length > 0) {
+                node.data.name = name;
+            }
+        }
+
+        if (Object.prototype.hasOwnProperty.call(updates, 'HTML')) {
+            const html = updates.HTML as string | undefined;
+            if (typeof html === 'string') {
+                node.data.HTML = html;
+            }
+        }
+
+        if (this.updateCallback) this.updateCallback(node);
+        return node;
+    }
+
+    /**
+     * Convenience method to rename a node (backward-compatible helper).
+     */
+    renameNode(node: ExtendedHierarchyNode, newName: string): ExtendedHierarchyNode {
+        return this.updateNode(node, { name: newName });
+    }
+
+    /**
      * Move a node to a new parent
      * @param nodeToMove - The node to move
      * @param newParent - The new parent node
