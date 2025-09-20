@@ -1,9 +1,10 @@
-import { deleteNodeById, ExtendedHierarchyNode, getFullTree } from "./tree-test";
+import { deleteNodeById, ExtendedHierarchyNode, getFullTree, getMindMapId } from "./tree-test";
 import { getEditor } from "./editor";
 import { treeManager } from "./tree-test";
 import { componentManager } from "./managers";
 import { ToastManager } from "./toast";
 import { fetchJSONData } from "./utils";
+import { data } from "alpinejs";
 
 
 type ModalInstance = {
@@ -112,7 +113,8 @@ class EditorModal extends BaseModal{
     async save(){
         if(this.activeNode){
             this.activeNode.data.HTML = getEditor()?.getHTML();
-            const response = await fetchJSONData(`/api/mindmaps/4/`, {
+            const mindMapId = getMindMapId();
+            const response = await fetchJSONData(`/api/mindmaps/${mindMapId}/`, {
                 method: 'PATCH',
                 data: { data : getFullTree()}
             });
@@ -125,6 +127,33 @@ class EditorModal extends BaseModal{
 
     openSetLinkForm(){
         componentManager.getInstance('fe-set-link')?.open();
+    }
+
+    openEditNodeForm(){
+        componentManager.getInstance('fe-edit-node')?.open();
+        // After the overlay is visible, prefill the input with current node name
+        const nameInput = document.getElementById('new-name') as HTMLInputElement;
+        nameInput.value = this.activeNode?.data.name || '';
+        nameInput.select();
+    }
+
+    editNode(){
+        if(this.activeNode){
+            const form = document.getElementById('edit-node-form') as HTMLFormElement;
+            if(form.checkValidity()){
+                const formData = new FormData(form);
+                const newName = String(formData.get('new_name')).trim();
+                const dataFields = this.df.getFields();
+                treeManager.updateNode(this.activeNode, { name: newName });
+                dataFields.title.textContent = newName;
+                ToastManager.success('Node edited successfully');
+                componentManager.getInstance('fe-edit-node')?.close();
+                form.reset();
+            }
+            else{
+                form.reportValidity();
+            }
+        }
     }
 
     setLink(url: string){
