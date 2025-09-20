@@ -1,0 +1,27 @@
+{% component "focusedElement" id="fe-set-link" %}
+  {% fill "title" %}Set Link{% endfill %}
+  {% fill "default" %}
+  <form 
+  class="p-4 bg-white" 
+      @keydown.enter="$event.preventDefault();" 
+      id="set-link-form">   
+            <div class="relative">
+                  <input
+                  x-ref="urlInput"
+                  type="text" @keyup.enter="getEditorModal().setLink($el.value)" 
+                  x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
+                  name="url"
+                  placeholder="Enter URL"
+                  required
+                  class="block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500"
+                  />
+              </div>
+              <button 
+              type="button" 
+              @click="getEditorModal().setLink($refs.urlInput.value)" 
+              class="inline-flex items-center justify-center w-full rounded-md text-sm px-3 py-4 bg-slate-900 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:outline-none font-medium mt-4">
+              Set Link
+            </button>
+          </form>
+      {% endfill %}
+    {% endcomponent %}

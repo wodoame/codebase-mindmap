@@ -1,0 +1,28 @@
+{% component "focusedElement" id="fe-edit-node" %}
+  {% fill "title" %}Edit Node{% endfill %}
+  {% fill "default" %}
+  <form 
+  class="p-4 bg-white" 
+      @keydown.enter="$event.preventDefault();" 
+      id="edit-node-form">   
+            <div class="relative">
+              <label class="block text-sm font-medium mb-1" for="new-name">New Name</label>
+                  <input
+                  type="text" @keyup.enter="getEditorModal().editNode()" 
+                  x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
+                  name="new_name"
+                  id="new-name"
+                  placeholder="Enter Name"
+                  required
+                  class="block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500"
+                  />
+              </div>
+              <button 
+              type="button" 
+              @click="getEditorModal().editNode()" 
+              class="inline-flex items-center justify-center w-full rounded-md text-sm px-3 py-4 bg-slate-900 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:outline-none font-medium mt-4">
+              Edit Node
+            </button>
+          </form>
+      {% endfill %}
+    {% endcomponent %}

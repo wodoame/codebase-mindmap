@@ -22,7 +22,7 @@
            </div>
            <div 
             title="Edit this node"
-            @click="getEditorModal().editNode()"
+            @click="getEditorModal().openEditNodeForm()"
             class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
            </div>
@@ -34,72 +34,14 @@
           {% component "editor" / %}
         </div>
 
-        <!-- add node form -->
-        {% component "focusedElement" id="fe-add-node" %}
-        <form 
-        class="p-4 bg-white" 
-        @keydown.enter="$event.preventDefault();" 
-        id="add-node-form">   
-        <div class="relative">
-          <input type="text" @keyup.enter="getEditorModal().addChildNode()" 
-          x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
-          name="node_name"
-          placeholder="Enter node name"
-          required
-          class="block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500"
-          />
-        </div>
-        <button 
-        type="button" 
-        @click="getEditorModal().addChildNode()" 
-        class="inline-flex items-center justify-center w-full rounded-md text-sm px-3 py-4 bg-slate-900 text-white hover:bg-slate-800 focus:outline-none font-medium mt-4">
-        Add Node
-      </button>
-    </form>
-    {% endcomponent %}
-    
-    <!-- set link form  -->
-    {% component "focusedElement" id="fe-set-link" %}
-      {% fill "title" %}Set Link{% endfill %}
-      {% fill "default" %}
-      <form 
-      class="p-4 bg-white" 
-          @keydown.enter="$event.preventDefault();" 
-          id="set-link-form">   
-                <div class="relative">
-                      <input
-                      x-ref="urlInput"
-                      type="text" @keyup.enter="getEditorModal().setLink($el.value)" 
-                      x-effect="isOpen ? $nextTick(() => $el.focus()) : null"
-                      name="url"
-                      placeholder="Enter URL"
-                      required
-                      class="block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500"
-                      />
-                  </div>
-                  <button 
-                  type="button" 
-                  @click="getEditorModal().setLink($refs.urlInput.value)" 
-                  class="inline-flex items-center justify-center w-full rounded-md text-sm px-3 py-4 bg-slate-900 text-white hover:bg-slate-800 focus:ring-2 focus:ring-slate-500 focus:outline-none font-medium mt-4">
-                  Set Link
-                </button>
-              </form>
-          {% endfill %}
-        {% endcomponent %}
-
-        <!-- confirm delete overlay -->
-        {% component "focusedElement" id="fe-confirm-delete" %}
-          {% fill "title" %}Delete Node{% endfill %}
-          {% fill "default" %}
-            <div class="p-4 bg-white">
-              <p class="text-sm text-gray-700">Are you sure you want to delete this node? This action cannot be undone.</p>
-              <div class="pt-4 flex items-center gap-2">
-                <button type="button" @click="getEditorModal().cancelConfirmDelete()" class="inline-flex items-center justify-center flex-1 rounded-md text-sm px-3 py-4 border border-gray-300 text-gray-900 hover:bg-gray-100 focus:outline-none">Cancel</button>
-                <button type="button" @click="getEditorModal().confirmDelete()" class="inline-flex items-center justify-center flex-1 rounded-md text-sm px-3 py-4 bg-rose-600 text-white hover:bg-rose-500 focus:outline-none">Delete</button>
-              </div>
-            </div>
-          {% endfill %}
-        {% endcomponent %}
+  <!-- add node form -->
+  {% component "addNodeOverlay" / %}
+  <!-- set link form  -->
+  {% component "setLinkOverlay" / %}
+  <!-- edit node form  -->
+  {% component "editNodeOverlay" / %}
+  <!-- confirm delete overlay -->
+  {% component "confirmDeleteOverlay" / %}
 
 
       {% endfill %}
