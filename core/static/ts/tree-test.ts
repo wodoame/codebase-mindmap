@@ -331,49 +331,54 @@ document.addEventListener('DOMContentLoaded', async () => {
             .text(d => d._children ? '>' : '<'); // > for collapsed, < for expanded
 
         // Update nodes
-        const nodeUpdate = nodeEnter.merge(node).transition()
+        const nodeMerged = nodeEnter.merge(node);
+        const nodeUpdate = nodeMerged.transition()
             .duration(duration)
             .attr("transform", d => `translate(${d.y},${d.x})`);
 
-        // Calculate text dimensions and update rectangles
-        nodeUpdate.select('text')
-            .style("fill-opacity", 1)
-            .each(function(d) {
-                const textElement = this as SVGTextElement;
-                const bbox = textElement.getBBox();
-                const padding = 10;
-                const rectWidth = bbox.width + padding * 2;
-                const rectHeight = bbox.height + padding;
-                
-                // Store dimensions on the node data
-                d.rectWidth = rectWidth;
-                d.rectHeight = rectHeight;
-                
-                // Update the rectangle size and position - align left edges
-                select(textElement.parentNode as Element).select('rect')
-                    .attr('width', rectWidth)
-                    .attr('height', rectHeight)
-                    .attr('x', 0)  // Align left edge to node position
-                    .attr('y', -rectHeight / 2)  // Center vertically
-                    .style("fill", d._children ? "lightsteelblue" : "#fff");
+        // Update label text (non expand-text) so name changes reflect in the UI
+        const labelUpdate = nodeMerged
+            .select('text:not(.expand-text)')
+            .text(d => d.data.name)
+            .style("fill-opacity", 1);
 
-                // Adjust text position to be centered within the left-aligned rectangle
-                select(textElement.parentNode as Element).select('text:not(.expand-text)')
-                    .attr('x', rectWidth / 2);  // Center text within rectangle
+        // Calculate text dimensions and update rectangles using the correct label element
+        labelUpdate.each(function(d) {
+            const textElement = this as SVGTextElement;
+            const bbox = textElement.getBBox();
+            const padding = 10;
+            const rectWidth = bbox.width + padding * 2;
+            const rectHeight = bbox.height + padding;
 
-                // Position the expand/collapse indicator circle to the right of rectangle
-                const spacing = 5;
-                const indicatorX = rectWidth + spacing + 8; // Rectangle width + spacing + circle radius
-                
-                select(textElement.parentNode as Element).select('.expand-indicator')
-                    .attr('cx', indicatorX)
-                    .style('opacity', d._children || d.children ? 1 : 0);
+            // Store dimensions on the node data
+            d.rectWidth = rectWidth;
+            d.rectHeight = rectHeight;
 
-                select(textElement.parentNode as Element).select('.expand-text')
-                    .attr('x', indicatorX)
-                    .style('opacity', d._children || d.children ? 1 : 0)
-                    .text(d._children ? '>' : '<');
-            });
+            // Update the rectangle size and position - align left edges
+            select(textElement.parentNode as Element).select('rect')
+                .attr('width', rectWidth)
+                .attr('height', rectHeight)
+                .attr('x', 0)  // Align left edge to node position
+                .attr('y', -rectHeight / 2)  // Center vertically
+                .style("fill", d._children ? "lightsteelblue" : "#fff");
+
+            // Adjust text position to be centered within the left-aligned rectangle
+            select(textElement.parentNode as Element).select('text:not(.expand-text)')
+                .attr('x', rectWidth / 2);  // Center text within rectangle
+
+            // Position the expand/collapse indicator circle to the right of rectangle
+            const spacing = 5;
+            const indicatorX = rectWidth + spacing + 8; // Rectangle width + spacing + circle radius
+
+            select(textElement.parentNode as Element).select('.expand-indicator')
+                .attr('cx', indicatorX)
+                .style('opacity', d._children || d.children ? 1 : 0);
+
+            select(textElement.parentNode as Element).select('.expand-text')
+                .attr('x', indicatorX)
+                .style('opacity', d._children || d.children ? 1 : 0)
+                .text(d._children ? '>' : '<');
+        });
 
         // Exit nodes
         const nodeExit = node.exit().transition()
