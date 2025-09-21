@@ -8,7 +8,8 @@
     <title>Mind Maps · Sandbox</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <link rel="stylesheet" href="{% static 'css/github-dark.css' %}">
-    <script type="module" crossorigin src="{% static 'js/vite/bundle.js' %}"></script>
+    <script type="module" crossorigin src="{% static 'js/vite/modals.js' %}"></script>
+    <script type="module" crossorigin src="{% static 'js/vite/misc.js' %}"></script>
     <style>
       body {
         margin: 2rem;
@@ -49,6 +50,11 @@
           href="{% url 'editor' mindmap_id=m.id %}"
           class="inline-flex items-center rounded-md bg-slate-900 text-white text-xs px-2.5 py-1.5 hover:bg-slate-800">Open</a>
           <a href="#" class="inline-flex items-center rounded-md border text-xs px-2.5 py-1.5 hover:bg-slate-50">Edit</a>
+          <button 
+          type="button" 
+          x-data
+          @click="getDeleteMindmapModal().show('{{m.id}}')"
+          class="cursor-pointer inline-flex items-center rounded-md border text-xs px-2.5 py-1.5 text-red-600 hover:bg-red-50">Delete</button>
         </div>
       </article>
       {% endfor %}
@@ -63,5 +69,7 @@
     </section>
     {% endif %}
   </main>
+  <div class="bg-gray-900/50 fixed inset-0 z-50 w-full hidden" id="animated-backdrop"></div>
+  {% component "mindmapDeleteModal" / %}
 </body>
 </html>

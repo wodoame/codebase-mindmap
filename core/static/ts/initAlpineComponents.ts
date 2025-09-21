@@ -109,3 +109,28 @@ function handleAlpineInitialization(){
 
 // initialize it with
 document.addEventListener('alpine:init', handleAlpineInitialization);
+
+// Helpers to control the confirm mindmap delete overlay
+declare global {
+    interface Window {
+        openMindmapDeleteModal?: (opts: { id: number; title: string; submit: () => void }) => void;
+        confirmMindmapDelete?: () => void;
+    }
+}
+
+let pendingMindmapDeleteSubmit: (() => void) | null = null;
+
+window.openMindmapDeleteModal = ({ id, title, submit }) => {
+    pendingMindmapDeleteSubmit = submit;
+    const titleEl = document.getElementById('confirm-mindmap-delete-title');
+    if (titleEl) titleEl.textContent = title;
+    const fe = componentManager.getInstance('fe-confirm-mindmap-delete');
+    fe?.open();
+};
+
+window.confirmMindmapDelete = () => {
+    if (pendingMindmapDeleteSubmit) {
+        pendingMindmapDeleteSubmit();
+        pendingMindmapDeleteSubmit = null;
+    }
+};

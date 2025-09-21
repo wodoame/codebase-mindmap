@@ -242,7 +242,33 @@ class EditorModal extends BaseModal{
     }
 }
 
+
+class DeleteMindmapModal extends BaseModal{
+    private static instance: DeleteMindmapModal;
+
+    static getInstance(): DeleteMindmapModal {
+        if (!this.instance) {
+            this.instance = new DeleteMindmapModal('mindmap-delete-modal');
+        }
+        return this.instance;
+    }
+
+    show(id:string){
+        const form = document.getElementById('mindmap-delete-form') as HTMLFormElement;
+        form.action = `/maps/${id}/delete/`;
+        this.open();
+    }
+
+    confirmDelete(){
+        const form = document.getElementById('mindmap-delete-form') as HTMLFormElement;
+        this.close();
+        form.submit();
+    }
+}
+
 const getEditorModal = () => EditorModal.getInstance();
+const getDeleteMindmapModal = () => DeleteMindmapModal.getInstance();
 
 window['getEditorModal'] = getEditorModal;
-export { modalManager, getEditorModal };
+window['getDeleteMindmapModal'] = getDeleteMindmapModal;
+export { modalManager, getEditorModal, getDeleteMindmapModal };

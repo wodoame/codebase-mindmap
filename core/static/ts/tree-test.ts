@@ -2,8 +2,7 @@ import { select, tree, hierarchy, HierarchyNode, zoom, ZoomBehavior, zoomIdentit
 import { Tree } from "./tree-datastructure";
 import { getEditorModal} from "./modals";
 import { D3TreeManager } from "./d3-tree-manager";
-import { fetchJSONData } from "./utils";
-import { generateId } from "./utils";
+import { fetchJSONData, generateId} from "./utils";
 
 // Define interfaces
 export interface TNode {
