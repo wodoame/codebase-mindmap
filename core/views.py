@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import MindMap
 from .forms import MindMapForm
@@ -30,7 +30,7 @@ class CreateMindMap(View):
         form = MindMapForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('editor')  # '/test/' route
+            return redirect('index')  # '/test/' route
         return render(request, 'core/pages/mindmaps/create.html', {"form": form})
     
 class MindMaps(View):
@@ -38,3 +38,10 @@ class MindMaps(View):
         mindmaps = MindMap.objects.order_by('-updated_at')
         context = {"mindmaps": mindmaps}
         return render(request, 'core/pages/mindmaps.html', context)
+
+
+class DeleteMindMap(View):
+    def post(self, request, mindmap_id):
+        mindmap = get_object_or_404(MindMap, pk=mindmap_id)
+        mindmap.delete()
+        return redirect('mindmaps')
