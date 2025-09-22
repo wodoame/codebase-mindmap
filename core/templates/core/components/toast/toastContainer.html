@@ -3,7 +3,7 @@
 id="{{id}}"
 x-data="toastContainer('{{id}}')"
 @show-toast.document="addToast($event.detail)"
-class="flex flex-col items-center w-full px-2 fixed top-8 left-1/2 z-[70] -translate-x-1/2" 
+class="flex flex-col items-center w-full max-w-[26rem] px-2 fixed top-8 left-1/2 z-[70] -translate-x-1/2" 
 >
 <template x-for="toast in toasts">
     <div 
