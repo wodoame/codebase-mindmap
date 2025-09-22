@@ -4,8 +4,6 @@ import { treeManager } from "./tree-test";
 import { componentManager } from "./managers";
 import { ToastManager } from "./toast";
 import { fetchJSONData } from "./utils";
-import { data } from "alpinejs";
-
 
 type ModalInstance = {
     toggleSideEffects: (force:boolean)=>void;
