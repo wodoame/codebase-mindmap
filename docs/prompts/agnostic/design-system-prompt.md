@@ -158,12 +158,53 @@ Use this as a blueprint when generating UI for any project. It defines a calm, m
 
 ## Utility Class Tokens (example mapping)
 
-- Buttons
-  - `.btn`: `inline-flex items-center rounded-md text-sm px-3 py-4`
-  - `.btn-primary`: dark solid background, white text, hover slightly darker
-  - `.btn-outline`: neutral border, transparent background, hover subtle fill
-  - `.btn-xs`: `text-xs px-2.5 py-1.5`
-- Inputs
+### Buttons
+
+Core intent: keep a consistent ergonomic base (inline-flex, vertical centering, radius, readable size, hover affordance, accessible focus).
+
+Recommended token layers:
+
+- Base (implicit for all buttons):
+  - `inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`
+- Primary (emphasis / main action):
+  - Add: `bg-slate-900 text-white hover:bg-slate-800 focus-visible:ring-slate-400`
+- Secondary (neutral outlined surface — the style already used in the existing “Edit” button):
+  - Add: `border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:ring-slate-400`
+  - Optional alias class: `.btn-secondary`
+- Outline (very light / ghost variant — if kept distinct from secondary, keep no fill until hover):
+  - Add: `border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50 focus-visible:ring-slate-400`
+- Destructive (danger):
+  - Add: `border border-red-500 text-red-600 hover:bg-red-50 focus-visible:ring-red-400`
+- XS size modifier:
+  - Add: `text-xs px-2.5 py-1.5`
+- Default size:
+  - `text-sm px-3 py-1.5`
+
+Example (utility-only usage):
+
+```html
+<button class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2">
+  Secondary
+</button>
+```
+
+Optional semantic alias mapping (if you introduce lightweight CSS):
+
+```css
+.btn { @apply inline-flex items-center gap-2 rounded-md font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2; }
+.btn-primary { @apply bg-slate-900 text-white hover:bg-slate-800 focus-visible:ring-slate-400; }
+.btn-secondary { @apply border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 focus-visible:ring-slate-400; }
+.btn-outline { @apply border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50 focus-visible:ring-slate-400; }
+.btn-xs { @apply text-xs px-2.5 py-1.5; }
+```
+
+Guidelines:
+
+- Use Secondary for neutral actions (Edit, Manage, Cancel).
+- Prefer Outline only when you intentionally want less visual weight than Secondary.
+- Keep icon + label with `gap-2`; omit gap if icon-only.
+
+### Inputs
   - `.input`: `block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500 focus:outline-none`
   - `.textarea`: `block w-full rounded-md border px-3 py-4 text-sm bg-white text-gray-900 placeholder-gray-500 focus:outline-none resize-none`
 - Surfaces

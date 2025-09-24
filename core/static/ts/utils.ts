@@ -1,4 +1,6 @@
- function getDropdown(id:string){
+import { getFullTree } from "./tree-test";
+
+function getDropdown(id:string){
     return window['FlowbiteInstances']._instances.Dropdown[id];
  }
 
@@ -81,5 +83,36 @@ function generateId(): string {
   return `n-${Date.now()}`;
 }
 
+/**
+ * Copy arbitrary text to the clipboard with fallback.
+ */
+async function copyTextToClipboard(text: string): Promise<void> {
+  if (navigator.clipboard && window.isSecureContext) {
+    // Modern async Clipboard API (preferred; requires secure context: HTTPS or localhost)
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  // Fallback for older browsers or non-secure contexts:
+  const ta = document.createElement('textarea');          // (1)
+  ta.value = text;                                        // (2)
+  ta.style.position = 'fixed';                            // (3)
+  ta.style.top = '0';
+  ta.style.left = '0';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();                                            // (4)
+  document.execCommand('copy');                           // (5) Legacy: kept only as a graceful fallback.
+  document.body.removeChild(ta);                          // (6) Cleanup
+}
 
-export { getDropdown, fetchJSONData, generateId };
+/**
+ * Serializes the full tree (pretty JSON) and copies to clipboard.
+ */
+async function copyFullTreeToClipboard(): Promise<void> {
+  const raw = getFullTree();
+  const text = typeof raw === 'string' ? raw : JSON.stringify(raw, null, 2);
+  await copyTextToClipboard(text);
+}
+
+window['copyFullTreeToClipboard'] = copyFullTreeToClipboard;
+export { getDropdown, fetchJSONData, generateId, copyTextToClipboard, copyFullTreeToClipboard };

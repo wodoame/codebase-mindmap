@@ -1,0 +1,21 @@
+<nav class="fixed top-0 left-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div class="px-3 py-3 lg:px-5">
+    <div class="flex items-center justify-end">
+      <div class="flex items-center">
+        <button
+          x-data="{ copied:false }"
+          @click="
+            copyFullTreeToClipboard()
+              .then(()=>{ copied = true; setTimeout(()=>copied=false,1500); })
+              .catch(()=>{ /* optionally handle error */ });
+          "
+          class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+            <span x-text="copied ? 'Copied!' : 'Copy'">Copy</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</nav>
