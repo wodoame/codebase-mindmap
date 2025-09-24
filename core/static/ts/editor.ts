@@ -30,6 +30,7 @@ interface AlpineEditor {
   updatedAt: number;
   state: 'edit' | 'preview';
   previewContent: string;
+  activeCodeBlockLanguage?: string | null; // currently active code block language (selection)
   $refs?: any;
   $dispatch?: (event: string, data?: any) => void;
   
@@ -74,6 +75,9 @@ interface AlpineEditor {
   
   // Focus method
   focus(): void;
+  
+  // Active code block language
+  getActiveCodeBlockLanguage?(): string | null;
 }
 
 // Register languages
@@ -96,6 +100,7 @@ document.addEventListener('alpine:init', () => {
       updatedAt: Date.now(), // force Alpine to rerender on selection change
       state: 'preview',
       previewContent: '',
+      activeCodeBlockLanguage: null,
       init() {
         const _this = this
 
@@ -217,6 +222,19 @@ document.addEventListener('alpine:init', () => {
           },
           onSelectionUpdate({ editor }) {
             _this.updatedAt = Date.now()
+            // Track active code block language changes
+            let current: string | null = null
+            if (editor.isActive('codeBlock')) {
+              const attrs = editor.getAttributes('codeBlock')
+              current = attrs?.language || null
+            }
+            if (_this.activeCodeBlockLanguage !== current) {
+              _this.activeCodeBlockLanguage = current
+              _this.$dispatch?.('code-block-active', { language: current })
+              document.dispatchEvent(new CustomEvent('editor-code-block-active', {
+                detail: { language: current }
+              }))
+            }
           },
         })
         getEditor = () => this;
@@ -393,8 +411,11 @@ document.addEventListener('alpine:init', () => {
           editor.commands.focus()
         }
       },
+      getActiveCodeBlockLanguage() {
+        return this.activeCodeBlockLanguage || null
+      },
     }
   })
 })
 
-export { getEditor }; 
+export { getEditor };

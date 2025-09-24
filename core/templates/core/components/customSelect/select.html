@@ -3,6 +3,7 @@
 <div 
 x-data="select('{{id}}')"
 x-show="isActive('codeBlock', updatedAt) && isEditMode()"
+@code-block-active.document="if (isActive('codeBlock', updatedAt)) { select($event.detail.language) }"
 x-ref="wrapper"
  {% if options %}
    data-options='{{options|json_string}}'
