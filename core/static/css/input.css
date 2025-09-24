@@ -18,6 +18,14 @@
     font-size: 0.875rem; /* text-sm equivalent: 14px */
     line-height: 1.25rem; /* 20px line height */
   }
+
+  /* Ensure all button elements have pointer cursor by default */
+  button,
+  [type="button"],
+  [type="submit"],
+  [role="button"] {
+    @apply cursor-pointer;
+  }
 }
 
 @font-face {
@@ -249,4 +257,3 @@
 }
 
 
-       

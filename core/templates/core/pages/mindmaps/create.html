@@ -7,7 +7,6 @@
   <title>Create Mind Map</title>
   <link rel="stylesheet" href="{% static 'css/output.css' %}">
   <link rel="stylesheet" href="{% static 'css/github-dark.css' %}">
-  <script type="module" crossorigin src="{% static 'js/vite/bundle.js' %}"></script>
   <style>
     body { margin: 2rem; font-family: 'Poppins', sans-serif; }
   </style>
@@ -37,11 +36,32 @@
         {% endif %}
       </div>
 
+      <div>
+        <label class="block text-sm font-medium mb-1" for="id_data">Data</label>
+        {{ form.data }}
+        {% if form.data.errors %}
+        <p class="text-sm text-red-600 mt-1">{{ form.data.errors|striptags }}</p>
+        {% endif %}
+      </div>
+
       <div class="pt-2 flex items-center gap-2">
         <button type="submit" class="inline-flex items-center rounded-md bg-slate-900 text-white text-sm px-3 py-2 hover:bg-slate-800">Create</button>
         <a href="{% url 'mindmaps' %}" class="inline-flex items-center rounded-md border text-sm px-3 py-2 hover:bg-slate-50">Cancel</a>
       </div>
     </form>
   </main>
+  <script>
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      if (!params.has('fork')) return;
+      const stored = localStorage.getItem('pendingForkData');
+      if (!stored) return;
+      const dataField = document.getElementById('id_data');
+      if (dataField) dataField.value = stored;
+      const titleField = document.getElementById('id_title');
+      if (titleField && !titleField.value.trim()) titleField.value = 'Forked Mind Map';
+      localStorage.removeItem('pendingForkData');
+    })();
+  </script>
 </body>
 </html>

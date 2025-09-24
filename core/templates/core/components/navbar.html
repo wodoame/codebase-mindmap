@@ -1,7 +1,7 @@
 <nav class="fixed top-0 left-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <div class="px-3 py-3 lg:px-5">
     <div class="flex items-center justify-end">
-      <div class="flex items-center">
+      <div class="flex items-center gap-2">
         <button
           x-data="{ copied:false }"
           @click="
@@ -10,9 +10,28 @@
               .catch(()=>{ /* optionally handle error */ });
           "
           class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-icon lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          <span x-text="copied ? 'Copied!' : 'Copy'">Copy</span>
+        </button>
+        
+        <button
+        x-data
+        @click="
+          (() => {
+            try {
+              const tree = window.getFullTree ? window.getFullTree() : null;
+              if (!tree) return;
+              localStorage.setItem('pendingForkData', JSON.stringify(tree, null, 2));
+              // Redirect to create page (change path if your URL differs)
+              window.location.href = '/maps/new/?fork=1';
+            } catch(e){ console.error('Fork failed', e); }
+          })()
+        "
+        class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
-            <span x-text="copied ? 'Copied!' : 'Copy'">Copy</span>
+            <svg xmlns="http://www.w3.org/2000/svg"  class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/><path d="M12 12v3"/></svg>
+            <span>Fork</span>
         </button>
       </div>
 
